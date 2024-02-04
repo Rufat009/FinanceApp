@@ -1,6 +1,13 @@
-﻿namespace FinanceApp.Repositories.Base
+﻿
+using FinanceApp.Dtos;
+using FinanceApp.Models;
+namespace FinanceApp.Repositories.Base;
+
+public interface ITransactionRepository 
 {
-    public interface IFinanceRepository
-    {
-    }
+    public  Task<IEnumerable<Transaction>> GetAllAsync();
+
+    public  Task<Transaction> GetByIdAsync(int id);
+
+    public Task CreateAsync(TransactionDto transaction);
 }

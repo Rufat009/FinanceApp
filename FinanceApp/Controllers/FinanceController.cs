@@ -1,12 +1,46 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FinanceApp.Dtos;
+using FinanceApp.Repositories;
+using FinanceApp.Repositories.Base;
+using Microsoft.AspNetCore.Mvc;
 
-namespace FinanceApp.Controllers
+namespace FinanceApp.Controllers;
+
+public class FinanceController : Controller
 {
-    public class FinanceController : Controller
+    private ITransactionRepository transactionRepository;
+
+    public FinanceController(ITransactionRepository transactionRepository)
     {
-        public IActionResult Index()
+        this.transactionRepository = transactionRepository;
+    }
+
+    public async Task<IActionResult> GetAll()
+    {
+        var transaction = await transactionRepository.GetAllAsync();
+        return View(transaction);
+    }
+
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Create(TransactionDto transactionDto)
+    {
+        if(transactionDto.Description == null || transactionDto.Amount <= 0)
         {
-            return View();
+            return BadRequest();
         }
+
+        transactionRepository.CreateAsync(transactionDto);
+        
+
+        return View();
+    }
+
+    public IActionResult Index()
+    {
+        return View();
     }
 }

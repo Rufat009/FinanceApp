@@ -1,0 +1,9 @@
+﻿@model IEnumerable<Transaction>
+
+@foreach (var item in Model)
+{
+    <span>@item.Description</span>
+    <span>@item.Amount</span>
+    <br />
+
+}

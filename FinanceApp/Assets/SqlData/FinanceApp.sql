@@ -12,7 +12,6 @@ create table Users
 create table Transactions
 (
 	[Id] int  primary key identity,
-	[UserId] int,
 	[Amount] decimal,
 	[Description] varchar(100)
 )

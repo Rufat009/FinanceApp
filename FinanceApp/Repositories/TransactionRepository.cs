@@ -1,41 +1,42 @@
 namespace FinanceApp.Repositories;
+
+using Dapper;
+using FinanceApp.Dtos;
 using FinanceApp.Models;
+using FinanceApp.Repositories.Base;
+using Microsoft.Data.SqlClient;
 
-public class FinanceRepository
+public class TransactionRepository : ITransactionRepository
 {
-	private readonly string? connectionString;
+    private readonly SqlConnection connection;
+    public TransactionRepository(SqlConnection connection)
+    {
+        this.connection = connection;
+    }
 
-	public FinanceRepository(IConfiguration configuration)
+
+    public async Task<IEnumerable<Transaction>> GetAllAsync()
 	{
-		connectionString = configuration.GetConnectionString("FinanceAppDb");
-	}
-
-	public async Task<IEnumerable<Finance>> GetAll()
-	{
-		using var connection = new SqlConnection(connectionString);
-
 		string sql = "select * from Transactions";
-		var currency = await connection.QueryAsync<Currency>(sql);
+		var transaction = await connection.QueryAsync<Transaction>(sql);
 
-		return currency;
+		return transaction;
 	}
-	public async Task<Currency> GetById(int id)
+	public async Task<Transaction> GetByIdAsync(int id)
 	{
-		using var connection = new SqlConnection(connectionString);
 
-		string sql = "select * from Currenies where Id = @Id";
-		var currency = await connection.QueryFirstOrDefaultAsync<Currency>(sql, new { Id = id });
+		string sql = "select * from Transactions where Id = @Id";
+		var transaction = await connection.QueryFirstOrDefaultAsync<Transaction>(sql, new { Id = id });
 
-		return currency;
+		return transaction;
 	}
 
-	public async Task Create(CurrencyDto currencyDto)
+	public async Task CreateAsync(TransactionDto transaction)
 	{
-		using var connection = new SqlConnection(connectionString);
 
-		string sql = @"insert into Currencies ([Name], [Count], [Price])
-                         values(@Name, @Count, @Price)";
+		string sql = @"insert into Transactions ([Amount], [Description])
+                         values( @Amount, @[Description])";
 
-		await connection.ExecuteAsync(sql, currencyDto);
+		await connection.ExecuteAsync(sql, transaction);
 	}
 }
