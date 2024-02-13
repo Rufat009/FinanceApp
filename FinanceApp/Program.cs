@@ -10,6 +10,7 @@ builder.Services.AddControllersWithViews();
 string? connectionString = builder.Configuration.GetConnectionString("FinanceAppDb");
 
 Console.WriteLine(connectionString + "1");
+
 builder.Services.AddScoped<ITransactionRepository>(p =>
 {
     return new TransactionRepository(new SqlConnection(connectionString));

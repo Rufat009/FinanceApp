@@ -35,7 +35,7 @@ public class TransactionRepository : ITransactionRepository
 	{
 
 		string sql = @"insert into Transactions ([Amount], [Description])
-                         values( @Amount, @[Description])";
+                         values( @Amount, @Description)";
 
 		await connection.ExecuteAsync(sql, transaction);
 	}
