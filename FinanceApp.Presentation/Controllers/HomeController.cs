@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using FinanceApp.Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using FinanceApp.Models;
 
 namespace FinanceApp.Controllers;
 

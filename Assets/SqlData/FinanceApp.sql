@@ -15,3 +15,14 @@ create table Transactions
 	[Amount] decimal,
 	[Description] varchar(100)
 )
+
+create table Logs
+(
+	[Id] int primary key identity,
+    [UserId] int,
+    [Url] nvarchar(max),
+    [MethodType] nvarchar(max),
+    [StatusCode] int,
+    [RequestBody] nvarchar(max),
+    [ResponseBody] nvarchar(max)
+)

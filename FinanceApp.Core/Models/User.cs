@@ -1,4 +1,4 @@
-namespace FinanceApp.Core.Models;
+namespace FinanceApp.Models;
 
 public class User
 {
