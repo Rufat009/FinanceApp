@@ -1,6 +1,7 @@
 using FinanceApp.Core.Repositories;
 using FinanceApp.Infrastructure.Respositories;
 using FinanceApp.Middlewares;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,12 @@ builder.Services.AddControllersWithViews();
 
 string? connectionString = builder.Configuration.GetConnectionString("FinanceAppDb");
 
-Console.WriteLine(connectionString + "1");
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Identity/Login";
+        options.ReturnUrlParameter = "returnUrl";
+    });
 
 builder.Services.AddScoped<ITransactionRepository>(p =>
 {
@@ -20,8 +26,6 @@ builder.Services.AddScoped<ILogRepository>(p =>
 {
     return new FinanceLogRepository(new SqlConnection(connectionString));
 });
-
-bool toLog = builder.Configuration.GetSection("ToLog").Get<bool>();
 
 builder.Services.AddTransient<LogMiddleware>();
 
