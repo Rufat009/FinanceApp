@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 
 namespace FinanceApp.Middlewares
 {
-    public class LogMiddleware 
+    public class LogMiddleware : IMiddleware
     {
         private ILogRepository logRepository;
         private readonly IConfiguration isLogging;
@@ -15,7 +15,6 @@ namespace FinanceApp.Middlewares
         {
             this.isLogging = isLogging;
             this.logRepository = logRepository;
-
         }
         public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
         {

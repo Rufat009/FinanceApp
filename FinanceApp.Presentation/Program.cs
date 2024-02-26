@@ -21,11 +21,11 @@ builder.Services.AddScoped<ILogRepository>(p =>
     return new FinanceLogRepository(new SqlConnection(connectionString));
 });
 
+bool toLog = builder.Configuration.GetSection("ToLog").Get<bool>();
 
 builder.Services.AddTransient<LogMiddleware>();
 
 var app = builder.Build();
-
 
 if (!app.Environment.IsDevelopment())
 {
