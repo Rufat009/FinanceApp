@@ -1,19 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceApp.Models;
-using FinanceApp.Repositories;
-using FinanceApp.Repositories.Base;
 
-using Microsoft.VisualBasic;
+using System.Text;
+using FinanceApp.Core.Models;
+using FinanceApp.Core.Repositories;
+using Microsoft.AspNetCore.Http.Extensions;
+
 
 namespace FinanceApp.Middlewares
 {
-    public class LogMiddleware
+    public class LogMiddleware 
     {
         private ILogRepository logRepository;
         private readonly IConfiguration isLogging;
@@ -23,7 +17,7 @@ namespace FinanceApp.Middlewares
             this.logRepository = logRepository;
 
         }
-        public async Task InvokeAsync(HttpContent httpContext, RequestDelegate next)
+        public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
         {
             if (!isLogging.GetSection("ToLog").Get<bool>())
             {

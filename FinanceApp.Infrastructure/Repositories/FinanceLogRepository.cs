@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using Dapper;
-using FinanceApp.Models;
-using FinanceApp.Repositories.Base;
+using FinanceApp.Core.Models;
+using FinanceApp.Core.Repositories;
 using Microsoft.Data.SqlClient;
 
-namespace FinanceApp.Repositories
+namespace FinanceApp.Infrastructure.Respositories
 {
     public class FinanceLogRepository : ILogRepository
     {

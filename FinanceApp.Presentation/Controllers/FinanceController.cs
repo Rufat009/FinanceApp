@@ -1,6 +1,8 @@
-﻿using FinanceApp.Dtos;
-using FinanceApp.Repositories;
-using FinanceApp.Repositories.Base;
+﻿using FinanceApp.Core.Dtos;
+using FinanceApp.Core.Models;
+using FinanceApp.Core.Repositories;
+
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceApp.Controllers;

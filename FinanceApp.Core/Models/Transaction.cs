@@ -1,4 +1,4 @@
-﻿namespace FinanceApp.Models;
+﻿namespace FinanceApp.Core.Models;
 
 
 public class Transaction

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FinanceApp.Models;
+using FinanceApp.Core.Models;
 
-namespace FinanceApp.Repositories.Base
+namespace FinanceApp.Core.Repositories
 {
     public interface ILogRepository
     {
