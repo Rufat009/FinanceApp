@@ -1,21 +1,32 @@
 @{
     ViewData["Title"] = "Registration";
-    
-    string UserName = string.Empty;
-    string Login = string.Empty;
+
+    string Name = string.Empty;
+    string Surname = string.Empty;
+    int Age = default;
+    decimal Balance = default;
+    string Email = string.Empty;
     string Password = string.Empty;
 }
 
-
 <form asp-controller="Identity" asp-action="Registration" method="Post">
-    <label for="name">Name</label>
-    <input id="name" asp-for="@UserName" type="text">
+    <label asp-for="@Name">Name</label>
+    <input asp-for="@Name" type="text">
 
-    <label for="login">Login</label>
-    <input id="login" asp-for="@Login" type="text">
+    <label asp-for="@Surname">Surname</label>
+    <input asp-for="@Surname" type="text">
 
-    <label for="password">Password</label>
-    <input id="password" asp-for="@Password" type="password">
+    <label asp-for="@Age">Age</label>
+    <input asp-for="@Age" type="text">
+
+    
+    <input hidden asp-for="@Balance" type="text">
+
+    <label asp-for="@Email">Email</label>
+    <input asp-for="@Email" type="text">
+
+    <label asp-for="@Password">Password</label>
+    <input asp-for="@Password" type="text">
 
     <button id="submit" type="submit">Register</button>
 </form>

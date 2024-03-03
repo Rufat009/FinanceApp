@@ -22,6 +22,11 @@ builder.Services.AddScoped<ITransactionRepository>(p =>
     return new TransactionRepository(new SqlConnection(connectionString));
 });
 
+builder.Services.AddScoped<IUserRepository>(p =>
+{
+    return new UserRepository(new SqlConnection(connectionString));
+});
+
 builder.Services.AddScoped<ILogRepository>(p =>
 {
     return new FinanceLogRepository(new SqlConnection(connectionString));

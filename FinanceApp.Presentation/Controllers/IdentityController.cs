@@ -2,46 +2,49 @@
 using System.Net;
 using System.Security.Claims;
 using FinanceApp.Core.Dtos;
-using FinanceApp.Infrastructure.Services;
+using FinanceApp.Core.Repositories;
+using FinanceApp.Infrastructure.Respositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceApp.Presentation.Controllers
 {
     public class IdentityController : Controller
     {
-        private readonly IUserService service;
+        private readonly IUserRepository repository;
 
-        public IdentityController(IUserService service)
+        public IdentityController(IUserRepository repository)
         {
-            this.service = service;
+            this.repository = repository;
         }
 
-        
-        [HttpGet]
-        public IActionResult Login(string? returnUrl)
+        public IActionResult Login()
         {
-
-            ViewData["returnUrl"] = returnUrl;
             return View();
         }
 
         [HttpGet]
-        public IActionResult Registration(/*[FromForm] UserDto userDto*/){
+        public IActionResult Registration()
+        {
             return View();
         }
 
 
         [HttpPost]
 
-        public async Task<IActionResult> Login([FromForm] LoginDto loginDto){
-
-         try
+        public async Task<IActionResult> Login([FromForm] LoginDto loginDto)
         {
-            await service.LoginAsync(loginDto);
 
-            int userId = await service.GetIdByLogin(loginDto.Login);
+
+            var login = await repository.LoginAsync(loginDto);
+
+            if (login is null)
+                return BadRequest("Incorrect Login!");
+
+
+            int? userId = await repository.GetIdByEmail(loginDto.Email);
 
             HttpContext.Response.Cookies.Append("UserId", userId.ToString());
 
@@ -60,40 +63,29 @@ namespace FinanceApp.Presentation.Controllers
                 return RedirectToAction("Index", "Home");
 
             return RedirectPermanent(loginDto.ReturnUrl);
+
+
+
         }
-        catch (ArgumentException ex)
+        [HttpPost]
+        public async Task<IActionResult> Registration(UserDto userDto)
         {
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            ViewData["ErrorMessage"] = ex.Message;
-            return View();
+
+            await repository.CreateAsync(userDto);
+
+            return RedirectToAction("Login", "Identity");
         }
-        catch (Exception)
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> LogOut()
         {
-            return StatusCode(500, "Something Went Wrong!");
-        }
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return base.RedirectToAction("Login", "Identity");
         }
 
 
 
-     [HttpPost]
-    public async Task<IActionResult> Registration(UserDto userDto)
-    {
-        try
-        {
-            await service.CreateAsync(userDto);
-        }
-        catch (ArgumentException ex)
-        {
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            ViewData["ErrorMessage"] = ex.Message;
-            return View();
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "Error!");
-        }
-
-        return RedirectToAction("Login", "Identity");
-    }
     }
 }
