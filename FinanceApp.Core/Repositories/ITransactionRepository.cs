@@ -1,7 +1,8 @@
 ﻿
-using FinanceApp.Dtos;
-using FinanceApp.Models;
-namespace FinanceApp.Repositories.Base;
+using  FinanceApp.Core.Dtos;
+using FinanceApp.Core.Models;
+
+namespace FinanceApp.Core.Repositories;
 
 public interface ITransactionRepository 
 {

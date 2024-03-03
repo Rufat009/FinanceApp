@@ -1,10 +1,12 @@
-namespace FinanceApp.Repositories;
+
 
 using Dapper;
-using FinanceApp.Dtos;
-using FinanceApp.Models;
-using FinanceApp.Repositories.Base;
+using FinanceApp.Core.Dtos;
+using FinanceApp.Core.Models;
+using FinanceApp.Core.Repositories;
 using Microsoft.Data.SqlClient;
+
+namespace FinanceApp.Infrastructure.Respositories;
 
 public class TransactionRepository : ITransactionRepository
 {
@@ -39,4 +41,6 @@ public class TransactionRepository : ITransactionRepository
 
 		await connection.ExecuteAsync(sql, transaction);
 	}
+
+    
 }

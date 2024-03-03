@@ -1,9 +1,9 @@
-using FinanceApp.Repositories;
-using FinanceApp.Repositories.Base;
+using FinanceApp.Core.Repositories;
+using FinanceApp.Infrastructure.Respositories;
+using FinanceApp.Middlewares;
 using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddControllersWithViews();
 
@@ -16,10 +16,16 @@ builder.Services.AddScoped<ITransactionRepository>(p =>
     return new TransactionRepository(new SqlConnection(connectionString));
 });
 
+builder.Services.AddScoped<ILogRepository>(p =>
+{
+    return new FinanceLogRepository(new SqlConnection(connectionString));
+});
 
+bool toLog = builder.Configuration.GetSection("ToLog").Get<bool>();
+
+builder.Services.AddTransient<LogMiddleware>();
 
 var app = builder.Build();
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -27,7 +33,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
+app.UseMiddleware<LogMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

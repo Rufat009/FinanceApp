@@ -1,4 +1,4 @@
-﻿namespace FinanceApp.Dtos;
+﻿namespace FinanceApp.Core.Dtos;
 
 public class TransactionDto
 {
