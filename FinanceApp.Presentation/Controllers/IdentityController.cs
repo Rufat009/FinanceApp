@@ -67,10 +67,10 @@ namespace FinanceApp.Presentation.Controllers
 
 
         }
+        
         [HttpPost]
         public async Task<IActionResult> Registration(UserDto userDto)
         {
-
             await repository.CreateAsync(userDto);
 
             return RedirectToAction("Login", "Identity");

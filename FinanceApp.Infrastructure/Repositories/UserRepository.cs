@@ -19,8 +19,9 @@ namespace FinanceApp.Infrastructure.Respositories
         }
         public async Task CreateAsync(UserDto userDto)
         {
-            string query = @"insert into Users([Name], [Email], [Password],[Age],[Surname],[Balance])
-                        values(@Name, @Email, @Password, @Balance, @Age, @Surname)";
+            Console.WriteLine("CreateAsync Start");
+            string query = @"insert into Users([Name], [Email], [Password], [Age], [Surname], [Balance])
+                        values(@Name, @Email, @Password, @Age, @Surname, @Balance)";
 
             await connection.ExecuteAsync(query, userDto);
         }

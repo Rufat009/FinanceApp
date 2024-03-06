@@ -5,13 +5,21 @@
 
 }
 
-<form asp-action="Login" method="post"> 
-    
-    <label asp-for="@Email">Email</label>
-    <input asp-for="@Email" type="text">
-
-    <label asp-for="@Password">Password</label>
-    <input asp-for="@Password"type="password" >
-
-    <button id="submit" type="submit">Login</button>
-</form>
+<div class="login-box">
+    <h2>Login</h2>
+    <form asp-action="Login" method="post">
+        <div class="user-box">
+            <input asp-for="@Email" type="email" placeholder="Email">
+        </div>
+        <div class="user-box">
+            <input asp-for="@Password" type="password" placeholder="Password">
+        </div>
+        <a href="#">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <button>Submit</button>
+        </a>
+    </form>
+</div>
