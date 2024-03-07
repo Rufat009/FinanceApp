@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    bool isAuthenticated = base.User.Identity.IsAuthenticated;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -15,7 +19,7 @@
     <nav>
         <div class="logo" style="display: flex;align-items: center;">
             <span
-                style="color:#01939c; font-size:26px; font-weight:bold; letter-spacing: 1px;margin-left: 20px;">WEBLEB</span>
+                style="color:#01939c; font-size:26px; font-weight:bold; letter-spacing: 1px;margin-left: 20px;">FinanceApp</span>
         </div>
         <div class="hamburger">
             <div class="line1"></div>
@@ -23,11 +27,18 @@
             <div class="line3"></div>
         </div>
         <ul class="nav-links">
-            <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Create">Create</a></li>
+            @if (isAuthenticated)
+            {
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Create">Create</a></li>
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="LogOut">Logout</a></li>
+            }
             <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="GetAll">GetAll</a></li>
-            <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Login">Login</a></li>
-            <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity"
-                    asp-action="Registration">Registration</a></li>
+            @if (!isAuthenticated)
+            {
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Login">Login</a></li>
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity"
+                        asp-action="Registration">Registration</a></li>
+            }
         </ul>
     </nav>
 

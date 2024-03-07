@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
 using FinanceApp.Core.Dtos;
 using FinanceApp.Core.Models;
@@ -19,29 +15,36 @@ namespace FinanceApp.Infrastructure.Respositories
         }
         public async Task CreateAsync(UserDto userDto)
         {
-            Console.WriteLine("CreateAsync Start");
             string query = @"insert into Users([Name], [Email], [Password], [Age], [Surname], [Balance])
                         values(@Name, @Email, @Password, @Age, @Surname, @Balance)";
 
             await connection.ExecuteAsync(query, userDto);
         }
 
-        public async Task<int?> GetIdByEmail(string email)
+        public async Task<UserDto> GetUserByEmail(string email)
         {
-            string query = "select * from Users where [Email] = @email";
+            string query = "select * from Users where Email = @Email";
 
-            return (await connection.QueryFirstOrDefaultAsync<User>(query, new {email}))?.Id;
+            var user = await connection.QueryFirstOrDefaultAsync<UserDto>(query, new { Email = email });
 
+            if (user is null)
+            {
+                throw new ArgumentException($"There is no email: {email}");
+            }
+
+            return user;
         }
 
-        public async Task<int?> LoginAsync(LoginDto loginDto)
+        public async Task CheckPassword(LoginDto login)
         {
+            string query = "select * from Users where Password = @Password";
 
-            string userQuery = "select * from Users where [Email] = @Email and [Password] = @Password";
+            var user = await connection.QueryFirstOrDefaultAsync<UserDto>(query, login);
 
-            var user = await connection.QueryFirstOrDefaultAsync<User>(userQuery, loginDto);
-
-            return user?.Id;
+            if (user is null || login.Email != user.Email)
+            {
+                throw new ArgumentException("Incorrect password!");
+            }
         }
     }
 }

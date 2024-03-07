@@ -33,44 +33,48 @@ namespace FinanceApp.Presentation.Controllers
 
 
         [HttpPost]
-
         public async Task<IActionResult> Login([FromForm] LoginDto loginDto)
         {
+            try
+            {
+                var user = await repository.GetUserByEmail(loginDto.Email);
 
+                await repository.CheckPassword(loginDto);
 
-            var login = await repository.LoginAsync(loginDto);
+                HttpContext.Response.Cookies.Append("UserId", user.Email.ToString());
 
-            if (login is null)
-                return BadRequest("Incorrect Login!");
+                var claims = new List<Claim> {
+                    new("creationDate", DateTime.UtcNow.ToString()),
+                };
 
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            int? userId = await repository.GetIdByEmail(loginDto.Email);
+                await HttpContext.SignInAsync(
+                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal: new ClaimsPrincipal(claimsIdentity)
+                );
 
-            HttpContext.Response.Cookies.Append("UserId", userId.ToString());
+                if (string.IsNullOrWhiteSpace(loginDto.ReturnUrl))
+                    return RedirectToAction("Index", "Home");
 
-            var claims = new List<Claim> {
-                new("creationDate", DateTime.UtcNow.ToString()),
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            await HttpContext.SignInAsync(
-                scheme: CookieAuthenticationDefaults.AuthenticationScheme,
-                principal: new ClaimsPrincipal(claimsIdentity)
-            );
-
-            if (string.IsNullOrWhiteSpace(loginDto.ReturnUrl))
-                return RedirectToAction("Index", "Home");
-
-            return RedirectPermanent(loginDto.ReturnUrl);
-
-
-
+                return RedirectPermanent(loginDto.ReturnUrl);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error!");
+            }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Registration(UserDto userDto)
         {
+            // дороботать
+            // ArgumentNullException.ThrowIfNullOrEmpty(userDto.Name, nameof(userDto.Name));
+
             await repository.CreateAsync(userDto);
 
             return RedirectToAction("Login", "Identity");
@@ -84,8 +88,5 @@ namespace FinanceApp.Presentation.Controllers
 
             return base.RedirectToAction("Login", "Identity");
         }
-
-
-
     }
 }

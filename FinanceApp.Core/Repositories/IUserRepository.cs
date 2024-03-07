@@ -8,8 +8,8 @@ namespace FinanceApp.Core.Repositories
 {
     public interface IUserRepository
     {
-        Task<int?> LoginAsync(LoginDto loginDto);
-        Task<int?> GetIdByEmail(string email);
         Task CreateAsync(UserDto userDto);
+        Task<UserDto> GetUserByEmail(string email);
+        Task CheckPassword(LoginDto login);
     }
 }
