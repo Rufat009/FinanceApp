@@ -1,10 +1,9 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace FinanceApp.Core.Models;
 
-public class User
+public class User : IdentityUser
 {
-    public int Id { get; set; }
-    public string? Name { get; set; }
-    public int? Surname { get; set; }
     public int? Age { get; set; }
     public decimal? Balance { get; set; }
 }

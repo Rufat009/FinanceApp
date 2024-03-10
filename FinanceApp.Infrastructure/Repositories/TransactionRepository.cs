@@ -1,46 +1,41 @@
 
 
-using Dapper;
 using FinanceApp.Core.Dtos;
 using FinanceApp.Core.Models;
 using FinanceApp.Core.Repositories;
+using FinanceApp.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceApp.Infrastructure.Respositories;
 
 public class TransactionRepository : ITransactionRepository
 {
-    private readonly SqlConnection connection;
-    public TransactionRepository(SqlConnection connection)
-    {
-        this.connection = connection;
-    }
+	private readonly FinanceAppDbContext context;
 
-
-    public async Task<IEnumerable<Transaction>> GetAllAsync()
+	public TransactionRepository(FinanceAppDbContext context)
 	{
-		string sql = "select * from Transactions";
-		var transaction = await connection.QueryAsync<Transaction>(sql);
+		this.context = context;
+	}
 
-		return transaction;
+	public async Task<IEnumerable<Transaction>> GetAllAsync()
+	{
+		return await context.Transactions.ToListAsync();
 	}
 	public async Task<Transaction> GetByIdAsync(int id)
 	{
-
-		string sql = "select * from Transactions where Id = @Id";
-		var transaction = await connection.QueryFirstOrDefaultAsync<Transaction>(sql, new { Id = id });
-
-		return transaction;
+		return await context.Transactions.FirstAsync(o => o.Id == id);
 	}
 
 	public async Task CreateAsync(TransactionDto transaction)
 	{
-
-		string sql = @"insert into Transactions ([Amount], [Description])
-                         values( @Amount, @Description)";
-
-		await connection.ExecuteAsync(sql, transaction);
+		await context.Transactions.AddAsync(new Transaction
+		{
+			Amount = transaction.Amount,
+			Description = transaction.Description
+		});
+		await context.SaveChangesAsync();
 	}
 
-    
+
 }

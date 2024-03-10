@@ -13,13 +13,7 @@ namespace FinanceApp.Presentation.Controllers
 {
     public class IdentityController : Controller
     {
-        private readonly IUserRepository repository;
-
-        public IdentityController(IUserRepository repository)
-        {
-            this.repository = repository;
-        }
-
+      
         public IActionResult Login()
         {
             return View();
@@ -32,53 +26,52 @@ namespace FinanceApp.Presentation.Controllers
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> Login([FromForm] LoginDto loginDto)
-        {
-            try
-            {
-                var user = await repository.GetUserByEmail(loginDto.Email);
+       // [HttpPost]
+        // public async Task<IActionResult> Login([FromForm] LoginDto loginDto)
+        // {
+        //     try
+        //     {
+        //         var user = await repository.GetUserByEmail(loginDto.Email);
 
-                await repository.CheckPassword(loginDto);
+        //         await repository.CheckPassword(loginDto);
 
-                HttpContext.Response.Cookies.Append("UserId", user.Email.ToString());
+        //         HttpContext.Response.Cookies.Append("UserId", user.Email.ToString());
 
-                var claims = new List<Claim> {
-                    new("creationDate", DateTime.UtcNow.ToString()),
-                };
+        //         var claims = new List<Claim> {
+        //             new("creationDate", DateTime.UtcNow.ToString()),
+        //         };
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        //         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                await HttpContext.SignInAsync(
-                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
-                    principal: new ClaimsPrincipal(claimsIdentity)
-                );
+        //         await HttpContext.SignInAsync(
+        //             scheme: CookieAuthenticationDefaults.AuthenticationScheme,
+        //             principal: new ClaimsPrincipal(claimsIdentity)
+        //         );
 
-                if (string.IsNullOrWhiteSpace(loginDto.ReturnUrl))
-                    return RedirectToAction("Index", "Home");
+        //         if (string.IsNullOrWhiteSpace(loginDto.ReturnUrl))
+        //             return RedirectToAction("Index", "Home");
 
-                return RedirectPermanent(loginDto.ReturnUrl);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Error!");
-            }
-        }
+        //         return RedirectPermanent(loginDto.ReturnUrl);
+        //     }
+        //     catch (ArgumentException ex)
+        //     {
+        //         return BadRequest(ex.Message);
+        //     }
+        //     catch (Exception)
+        //     {
+        //         return StatusCode(500, "Error!");
+        //     }
+        // }
 
-        [HttpPost]
-        public async Task<IActionResult> Registration(UserDto userDto)
-        {
-            // дороботать
-            // ArgumentNullException.ThrowIfNullOrEmpty(userDto.Name, nameof(userDto.Name));
+        // [HttpPost]
+        // public async Task<IActionResult> Registration(UserDto userDto)
+        // {
+           
 
-            await repository.CreateAsync(userDto);
+        //     await repository.CreateAsync(userDto);
 
-            return RedirectToAction("Login", "Identity");
-        }
+        //     return RedirectToAction("Login", "Identity");
+        // }
 
         [HttpGet]
         [Authorize]
