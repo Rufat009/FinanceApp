@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Registration";
+
+    string Name = string.Empty;
+    string Surname = string.Empty;
+    string Age = string.Empty;
+    decimal Balance = default;
+    string Email = string.Empty;
+    string Password = string.Empty;
+}
+
+<div style="margin-top: 40px;" class="login-box">
+    <h2>Registration</h2>
+    <form asp-action="Registration" method="post" autocomplete="off"> 
+        <div class="user-box">
+            <input asp-for="@Name" type="text" placeholder="Name" autocomplete="off">
+        </div>
+        <div class="user-box">
+            <input asp-for="@Surname" type="text" placeholder="Surname" autocomplete="false">
+        </div>
+        <div class="user-box">
+            <label></label>
+            <input asp-for="@Age"  type="number" placeholder="Age" autocomplete="false">
+        </div>
+        <input hidden asp-for="@Balance" type="text">
+
+        <div class="user-box">
+            <input asp-for="@Email" type="email" placeholder="Email" autocomplete="false">
+        </div>
+        <div class="user-box">
+            <input asp-for="@Password" type="password" placeholder="Password" autocomplete="false">
+        </div>
+        <a href="#" style="margin: 0; padding: 0;">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <button style="width: 150px; height: 50px">Submit</button>
+        </a>
+    </form>
+</div>

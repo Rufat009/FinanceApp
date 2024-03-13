@@ -6,9 +6,9 @@ namespace FinanceApp.Core.Repositories;
 
 public interface ITransactionRepository 
 {
-    public  Task<IEnumerable<Transaction>> GetAllAsync();
+    Task<IEnumerable<Transaction>> GetAllAsync();
 
-    public  Task<Transaction> GetByIdAsync(int id);
+    Task<Transaction> GetByIdAsync(int id);
 
-    public Task CreateAsync(TransactionDto transaction);
+    Task CreateAsync(TransactionDto transaction);
 }

@@ -1,9 +1,29 @@
 ﻿@model IEnumerable<Transaction>
 
-@foreach (var item in Model)
+@if (!Model.Any())
 {
-    <span>@item.Description</span>
-    <span>@item.Amount</span>
-    <br />
-
+    <h1 class="text-center" style="padding-top: 300px; color: #fff">There is no finances!</h1>
 }
+else
+{
+    <ul class="get-all-ul text-center" style="padding-top: 100px;">
+        @foreach (var item in Model)
+        {
+            <span>Description: @item.Description</span>
+            <span>Amount: @item.Amount</span>
+            <br />
+        }
+    </ul>
+}
+
+<style>
+    .get-all-ul span {
+        color: #fff;
+        font-size: 20px;
+    }
+
+    .get-all-ul {
+        display: flex;
+        flex-direction: column;
+    }
+</style>

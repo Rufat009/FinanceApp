@@ -1,8 +1,6 @@
 ﻿using FinanceApp.Core.Dtos;
-using FinanceApp.Core.Models;
 using FinanceApp.Core.Repositories;
-
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceApp.Controllers;
@@ -16,33 +14,36 @@ public class FinanceController : Controller
         this.transactionRepository = transactionRepository;
     }
 
+    [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         var transaction = await transactionRepository.GetAllAsync();
+
         return View(transaction);
     }
 
+    [Authorize]
     public IActionResult Create()
     {
         return View();
     }
 
     [HttpPost]
+    [Authorize]
     public IActionResult Create(TransactionDto transactionDto)
     {
-        if (transactionDto.Description == null || transactionDto.Amount <= 0)
+        if (transactionDto.Description == null)
         {
-            return BadRequest();
+            return BadRequest("None description");
+        }
+
+        if (transactionDto.Amount <= 0)
+        {
+            return BadRequest("Amount can not be less than 0");
         }
 
         transactionRepository.CreateAsync(transactionDto);
 
-
-        return View();
-    }
-
-    public IActionResult Index()
-    {
-        return View();
+        return RedirectToAction("GetAll", "Finance");
     }
 }
