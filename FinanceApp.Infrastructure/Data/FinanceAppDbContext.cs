@@ -11,6 +11,7 @@ namespace FinanceApp.Infrastructure.Data
 {
     public class FinanceAppDbContext : IdentityDbContext<User, IdentityRole, string>
     {
+
         public DbSet<Log> Logs { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 

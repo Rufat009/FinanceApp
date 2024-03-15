@@ -2,84 +2,141 @@
 using System.Net;
 using System.Security.Claims;
 using FinanceApp.Core.Dtos;
+using FinanceApp.Core.Models;
 using FinanceApp.Core.Repositories;
 using FinanceApp.Infrastructure.Respositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceApp.Presentation.Controllers
 {
     public class IdentityController : Controller
     {
-      
-        public IActionResult Login()
+        private readonly UserManager<User> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly SignInManager<User> signInManager;
+
+        public IdentityController(UserManager<User> userManager,RoleManager<IdentityRole> roleManager,SignInManager<User> signInManager)
         {
-            return View();
+            this.userManager = userManager;
+            this.roleManager = roleManager;
+            this.signInManager = signInManager;
+        }
+        
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+
+            return RedirectToAction("Index", "Home");
         }
 
-        [HttpGet]
         public IActionResult Registration()
         {
             return View();
         }
 
-
-       // [HttpPost]
-        // public async Task<IActionResult> Login([FromForm] LoginDto loginDto)
-        // {
-        //     try
-        //     {
-        //         var user = await repository.GetUserByEmail(loginDto.Email);
-
-        //         await repository.CheckPassword(loginDto);
-
-        //         HttpContext.Response.Cookies.Append("UserId", user.Email.ToString());
-
-        //         var claims = new List<Claim> {
-        //             new("creationDate", DateTime.UtcNow.ToString()),
-        //         };
-
-        //         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-        //         await HttpContext.SignInAsync(
-        //             scheme: CookieAuthenticationDefaults.AuthenticationScheme,
-        //             principal: new ClaimsPrincipal(claimsIdentity)
-        //         );
-
-        //         if (string.IsNullOrWhiteSpace(loginDto.ReturnUrl))
-        //             return RedirectToAction("Index", "Home");
-
-        //         return RedirectPermanent(loginDto.ReturnUrl);
-        //     }
-        //     catch (ArgumentException ex)
-        //     {
-        //         return BadRequest(ex.Message);
-        //     }
-        //     catch (Exception)
-        //     {
-        //         return StatusCode(500, "Error!");
-        //     }
-        // }
-
-        // [HttpPost]
-        // public async Task<IActionResult> Registration(UserDto userDto)
-        // {
-           
-
-        //     await repository.CreateAsync(userDto);
-
-        //     return RedirectToAction("Login", "Identity");
-        // }
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> LogOut()
+        [HttpPost]
+        public async Task<IActionResult> Registration(UserDto userDto)
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (ModelState.IsValid == false)
+            {
+                return View();
+            }
 
-            return base.RedirectToAction("Login", "Identity");
+            var user = new User
+            {
+                UserName = userDto.Name,
+                Surname = userDto.Surname,
+                Age = userDto.Age,
+                Email = userDto.Email,
+
+            };
+
+            var result = await userManager.CreateAsync(user, userDto.Password);
+
+            if (!result.Succeeded)
+            {
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
+
+                if (ModelState.Any())
+                {
+                    return View();
+                }
+
+            }
+
+            var userRole = new IdentityRole
+            {
+                Name = "User"
+            };
+
+            await roleManager.CreateAsync(userRole);
+            await userManager.AddToRoleAsync(user,"User");
+
+            return RedirectToAction("Login");
+        }
+
+        public async Task<IActionResult> CreateAdmin()
+        {
+            var user = new User
+            {
+                UserName = "Admin",
+                Email = "admin@gmail.com"
+            };
+
+            var result = await userManager.CreateAsync(user, "Admin123!");
+
+            var userRole = new IdentityRole
+            {
+                Name = "Admin"
+            };
+
+            await roleManager.CreateAsync(userRole);
+            await userManager.AddToRoleAsync(user, "Admin");
+
+            return Ok();
+        }
+
+        public IActionResult Login(string? ReturnUrl)
+        {
+            ViewData["ReturnUrl"] = ReturnUrl;
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginDto userdto)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return View();
+            }
+
+            var user = await userManager.FindByEmailAsync(userdto.Email);
+
+            if (user is null)
+            {
+                ViewData.Add("Error", "No user with this email found");
+                return View();
+            }
+
+            var result = await signInManager.PasswordSignInAsync(user, userdto.Password, true, true);
+
+            if (result.Succeeded == false)
+            {
+                ViewData.Add("Error", "Incorrect Credentials");
+                return View();
+            }
+
+            return RedirectPermanent(userdto.ReturnUrl ?? "/");
+
         }
     }
 }

@@ -19,12 +19,12 @@ builder.Services.AddDbContext<FinanceAppDbContext>(options =>
 
     options.UseSqlServer(connectionString, o =>
     {
-        o.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
+        o.MigrationsAssembly("FinanceApp.Presentation");
     });
 });
 
 
-builder.Services.AddIdentity<User, IdentityRole<int>>(
+builder.Services.AddIdentity<User, IdentityRole>(
 ).AddEntityFrameworkStores<FinanceAppDbContext>();
 
 

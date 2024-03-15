@@ -11,31 +11,32 @@
 
 <div style="margin-top: 40px;" class="login-box">
     <h2>Registration</h2>
-    <form asp-action="Registration" method="post" autocomplete="off"> 
+    <form asp-action="Registration" method="post"> 
+        <div class="text-danger" asp-validation-summary="All"></div>
         <div class="user-box">
-            <input asp-for="@Name" type="text" placeholder="Name" autocomplete="off">
+            <input asp-for="@Name" type="text" placeholder="Name">
         </div>
         <div class="user-box">
-            <input asp-for="@Surname" type="text" placeholder="Surname" autocomplete="false">
+            <input asp-for="@Surname" type="text" placeholder="Surname">
         </div>
         <div class="user-box">
             <label></label>
-            <input asp-for="@Age"  type="number" placeholder="Age" autocomplete="false">
+            <input asp-for="@Age"  type="number" placeholder="Age">
         </div>
         <input hidden asp-for="@Balance" type="text">
 
         <div class="user-box">
-            <input asp-for="@Email" type="email" placeholder="Email" autocomplete="false">
+            <input asp-for="@Email" type="email" placeholder="Email">
         </div>
         <div class="user-box">
-            <input asp-for="@Password" type="password" placeholder="Password" autocomplete="false">
+            <input asp-for="@Password" type="password" placeholder="Password">
         </div>
         <a href="#" style="margin: 0; padding: 0;">
             <span></span>
             <span></span>
             <span></span>
             <span></span>
-            <button style="width: 150px; height: 50px">Submit</button>
+            <button type="submit" style="width: 150px; height: 50px">Submit</button>
         </a>
     </form>
 </div>
