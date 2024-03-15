@@ -45,7 +45,9 @@ public class TransactionRepository : ITransactionRepository
 
     public async Task UpdateAsync(Transaction transaction)
     {
-        context.Transactions.Update(transaction);
+		var result = await context.Transactions.FirstOrDefaultAsync(x => x.Id == transaction.Id);
+		result.Description = transaction.Description;
+		result.Amount = transaction.Amount;
 		await context.SaveChangesAsync();
     }
 }
