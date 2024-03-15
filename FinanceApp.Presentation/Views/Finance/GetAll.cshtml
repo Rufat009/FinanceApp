@@ -11,10 +11,15 @@ else
         {
             <span>Description: @item.Description</span>
             <span>Amount: @item.Amount</span>
+            <button onclick="redirectToAction('/Finance/Update?id=@item.Id')"> Edit</button>
+            <button onclick="redirectToAction('/Finance/Delete?id=@item.Id')">Delete</button>
+
             <br />
+            
         }
     </ul>
 }
+
 
 <style>
     .get-all-ul span {

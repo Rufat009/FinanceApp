@@ -20,7 +20,10 @@ namespace FinanceApp.Infrastructure.Respositories
             await context.Logs.AddAsync(myLog);
             await context.SaveChangesAsync();
 
+            
+
         }
+
 
 
     }

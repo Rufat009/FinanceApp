@@ -1,0 +1,17 @@
+@model Transaction
+
+<h1>Create Finance</h1>
+
+<form asp-action="Update" method="post">
+  
+    <div class="form-group">
+        <label asp-for="@Model.Description">Description</label>
+        <input asp-for="@Model.Description" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Amount">Amount</label>
+        <input asp-for="@Model.Amount" type="number" class="form-control">
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
