@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<Transaction>
+@{
+    bool isAdmin = base.User.IsInRole("Admin");
+     
+}
 
 @if (!Model.Any())
 {
@@ -11,9 +15,11 @@ else
         {
             <span>Description: @item.Description</span>
             <span>Amount: @item.Amount</span>
+            @if(isAdmin){
+                
             <button onclick="redirectToAction('/Finance/Update?id=@item.Id')"> Edit</button>
             <button onclick="redirectToAction('/Finance/Delete?id=@item.Id')">Delete</button>
-
+            }
             <br />
             
         }

@@ -1,5 +1,7 @@
 ﻿@{
     bool isAuthenticated = base.User.Identity.IsAuthenticated;
+    bool isAdmin = base.User.IsInRole("Admin");
+    
 }
 
 <!DOCTYPE html>
