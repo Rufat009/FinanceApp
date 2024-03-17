@@ -4,7 +4,9 @@ create table Users
 	[Name] varchar(100),
 	[Surname] varchar(100),
 	[Age] int,
-	[Balance] decimal
+	[Balance] decimal,
+	[Email] varchar(100),
+	[Password] varchar(100)
 )
 
 

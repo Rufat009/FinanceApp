@@ -1,27 +1,49 @@
+using System.Reflection;
+using FinanceApp.Core.Models;
 using FinanceApp.Core.Repositories;
+using FinanceApp.Infrastructure.Data;
 using FinanceApp.Infrastructure.Respositories;
 using FinanceApp.Middlewares;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
 string? connectionString = builder.Configuration.GetConnectionString("FinanceAppDb");
-
-Console.WriteLine(connectionString + "1");
-
-builder.Services.AddScoped<ITransactionRepository>(p =>
+builder.Services.AddDbContext<FinanceAppDbContext>(options =>
 {
-    return new TransactionRepository(new SqlConnection(connectionString));
+
+    options.UseSqlServer(connectionString, o =>
+    {
+        o.MigrationsAssembly("FinanceApp.Presentation");
+    });
 });
 
-builder.Services.AddScoped<ILogRepository>(p =>
-{
-    return new FinanceLogRepository(new SqlConnection(connectionString));
-});
 
-bool toLog = builder.Configuration.GetSection("ToLog").Get<bool>();
+builder.Services.AddIdentity<User, IdentityRole>(
+).AddEntityFrameworkStores<FinanceAppDbContext>();
+
+
+
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Identity/Login";
+        options.ReturnUrlParameter = "returnUrl";
+    });
+
+builder.Services.AddScoped<ITransactionRepository,TransactionRepository>();
+
+
+
+builder.Services.AddScoped<FinanceAppDbContext>();
+
+builder.Services.AddScoped<ILogRepository, FinanceLogRepository>();
 
 builder.Services.AddTransient<LogMiddleware>();
 
