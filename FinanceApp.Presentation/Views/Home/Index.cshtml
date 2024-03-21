@@ -2,29 +2,49 @@
     ViewData["Title"] = "Home Page";
 }
 
+
+
+
 <div class="text-center" style="padding-top: 100px;">
     <h1 class="display-4" style="color: #fff;">"Welcome to Finance App!
 
-<br>
-<br>
-Take control of your finances like never before. <br>Our intuitive platform empowers you to manage your money with ease.
-<br>
-Start your journey to financial freedom today with Finance App!"</h1>
+        <br>
+        <br>
+        Take control of your finances like never before. <br>Our intuitive platform empowers you to manage your money
+        with ease.
+        <br>
+        Start your journey to financial freedom today with Finance App!"
+    </h1>
 
+    <div class="images">
+        <img src="~/Assets/Atv+.png">
+        <img src="~/Assets/Azeriqaz.png">
+        <img src="~/Assets/Azerisiq.png">
+        <img src="~/Assets/Azersu.png">
+        <img src="~/Assets/Aztelekom.png">
+        <img src="~/Assets/Bulud Telecom.png">
+    </div>
 
+    <style>
+        .display-4 {
+            font-size: 30px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: bold;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-<style>
-    .display-4{
-        font-size: 30px;
-        font-family: 'Poppins', sans-serif;
-        font-weight: bold;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-</style>
+        .images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 30px;
+        }
 
-@* <style>
-    .service-picture{
-        width: 250px;
-    }
-</style> *@
+        .images img {
+            width: 300px;
+            height: 300px;
+            border-radius: 10px;
+
+        }
+    </style>
