@@ -2,6 +2,7 @@ using System.Reflection;
 using FinanceApp.Core.Models;
 using FinanceApp.Core.Repositories;
 using FinanceApp.Infrastructure.Data;
+using FinanceApp.Infrastructure.Repositories;
 using FinanceApp.Infrastructure.Respositories;
 using FinanceApp.Middlewares;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -27,15 +28,12 @@ builder.Services.AddDbContext<FinanceAppDbContext>(options =>
 builder.Services.AddIdentity<User, IdentityRole>(
 ).AddEntityFrameworkStores<FinanceAppDbContext>();
 
+builder.Services.ConfigureApplicationCookie( p => {
+    p.LoginPath = "/Identity/Login";
 
+});
 
-
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Identity/Login";
-        options.ReturnUrlParameter = "returnUrl";
-    });
+builder.Services.AddScoped<IServiceRepository,ServiceRepository>();
 
 builder.Services.AddScoped<ITransactionRepository,TransactionRepository>();
 
@@ -48,6 +46,8 @@ builder.Services.AddScoped<ILogRepository, FinanceLogRepository>();
 builder.Services.AddTransient<LogMiddleware>();
 
 var app = builder.Build();
+
+app.UseAuthentication();
 
 if (!app.Environment.IsDevelopment())
 {

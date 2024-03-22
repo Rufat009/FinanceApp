@@ -4,16 +4,20 @@ using FinanceApp.Core.Dtos;
 using FinanceApp.Core.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FinanceApp.Controllers;
 
 public class FinanceController : Controller
 {
     private ITransactionRepository transactionRepository;
+    private IServiceRepository serviceRepository;
 
-    public FinanceController(ITransactionRepository transactionRepository)
+
+    public FinanceController(ITransactionRepository transactionRepository, IServiceRepository serviceRepository)
     {
         this.transactionRepository = transactionRepository;
+        this.serviceRepository = serviceRepository;
     }
 
     [HttpGet]
@@ -24,38 +28,12 @@ public class FinanceController : Controller
         return View(transaction);
     }
 
-    [Authorize]
-    public IActionResult Create()
-    {
-        return View();
-    }
 
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> Create(TransactionDto transactionDto)
-    {
-        if (transactionDto.Description == null)
-        {
-            return BadRequest("None description");
-        }
-
-        if (transactionDto.Amount <= 0)
-        {
-            return BadRequest("Amount can not be less than 0");
-        }
-
-        await transactionRepository.CreateAsync(transactionDto);
-
-        return RedirectToAction("GetAll", "Finance");
-    }
-
-
-    
     public async Task<IActionResult> Delete(int id)
     {
         await this.transactionRepository.DeleteAsync(await transactionRepository.GetByIdAsync(id));
 
-          return RedirectToAction("GetAll");
+        return RedirectToAction("GetAll");
     }
 
     [HttpGet]
@@ -76,6 +54,18 @@ public class FinanceController : Controller
         return RedirectToAction("GetAll");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Services()
+    {
+        return View(await serviceRepository.GetAll());
+    }
+
+    [HttpGet]
+    [Authorize] 
+    public IActionResult Payment(int id)
+    {
+        return View(id);
+    }
 
 
 

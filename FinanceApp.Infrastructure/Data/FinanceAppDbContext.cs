@@ -14,6 +14,9 @@ namespace FinanceApp.Infrastructure.Data
 
         public DbSet<Log> Logs { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Bill> Bills {get; set;}
+        public DbSet<Service> Services {get; set;}
+
 
           public FinanceAppDbContext(DbContextOptions<FinanceAppDbContext> options) : base(options) {}
     }

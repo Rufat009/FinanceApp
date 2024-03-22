@@ -1,7 +1,8 @@
 ﻿@{
     bool isAuthenticated = base.User.Identity.IsAuthenticated;
     bool isAdmin = base.User.IsInRole("Admin");
-    
+    var user = User.Identity.Name;
+
 }
 
 <!DOCTYPE html>
@@ -31,17 +32,27 @@
         <ul class="nav-links">
             @if (isAuthenticated)
             {
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Create">Service Payment</a></li>
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="LogOut">Logout</a></li>
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Services">Services</a></li>
+               // <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Create">Service Payment</a></li>
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Services">Services</a>
+                </li>
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="GetAll">History</a></li>
 
+                <li class="dropdown-item text-dark">
+                    <a class="nav-link" asp-area="" asp-controller="Identity" asp-action="Profile">@user</a>
+                </li>
             }
-            <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="GetAll">History</a></li>
             @if (!isAuthenticated)
             {
                 <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Login">Login</a></li>
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Services">Services</a>
+                </li>
+
                 <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity"
                         asp-action="Registration">Registration</a></li>
+            }
+            @if (isAuthenticated)
+            {
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="LogOut">Logout</a></li>
             }
         </ul>
     </nav>

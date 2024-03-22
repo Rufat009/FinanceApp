@@ -19,13 +19,13 @@ namespace FinanceApp.Presentation.Controllers
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly SignInManager<User> signInManager;
 
-        public IdentityController(UserManager<User> userManager,RoleManager<IdentityRole> roleManager,SignInManager<User> signInManager)
+        public IdentityController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.signInManager = signInManager;
         }
-        
+
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
@@ -78,7 +78,7 @@ namespace FinanceApp.Presentation.Controllers
             };
 
             await roleManager.CreateAsync(userRole);
-            await userManager.AddToRoleAsync(user,"User");
+            await userManager.AddToRoleAsync(user, "User");
 
             return RedirectToAction("Login");
         }
@@ -123,7 +123,7 @@ namespace FinanceApp.Presentation.Controllers
 
             if (user is null)
             {
-                ViewData.Add("Error", "No user with this email found");
+                ModelState.AddModelError("Incorrect Email", "No user with this email found");
                 return View();
             }
 
@@ -131,7 +131,8 @@ namespace FinanceApp.Presentation.Controllers
 
             if (result.Succeeded == false)
             {
-                ViewData.Add("Error", "Incorrect Credentials");
+                ModelState.AddModelError("Incorrect Password", "Incorrect Credentials");
+
                 return View();
             }
 
@@ -139,4 +140,9 @@ namespace FinanceApp.Presentation.Controllers
 
         }
     }
+    // public async Task<IActionResult> Profile(){
+
+    //     return
+    // }
+
 }
