@@ -10,5 +10,6 @@ namespace FinanceApp.Core.Repositories
     public interface IServiceRepository 
     {
         public Task<IEnumerable<Service>> GetAll();
+        public Task<Service> GetById(int id);
     }
 }

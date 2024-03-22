@@ -5,6 +5,8 @@ using FinanceApp.Core.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
+using FinanceApp.Presentation.ViewModels;
 
 namespace FinanceApp.Controllers;
 
@@ -13,9 +15,11 @@ public class FinanceController : Controller
     private ITransactionRepository transactionRepository;
     private IServiceRepository serviceRepository;
 
+    private readonly UserManager<User> userManager;
 
-    public FinanceController(ITransactionRepository transactionRepository, IServiceRepository serviceRepository)
+    public FinanceController(ITransactionRepository transactionRepository, IServiceRepository serviceRepository, UserManager<User> userManager)
     {
+        this.userManager = userManager;
         this.transactionRepository = transactionRepository;
         this.serviceRepository = serviceRepository;
     }
@@ -61,12 +65,18 @@ public class FinanceController : Controller
     }
 
     [HttpGet]
-    [Authorize] 
-    public IActionResult Payment(int id)
+    [Authorize]
+    public async Task<IActionResult> Payment(int id)
     {
-        return View(id);
-    }
+        var service = await serviceRepository.GetById(id);
 
+        var user = await userManager.GetUserAsync(User);
+
+        return View(new PaymentViewModel{
+            Service = service,
+            User = user
+        });
+    }
 
 
 }

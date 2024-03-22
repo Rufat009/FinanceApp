@@ -22,5 +22,10 @@ namespace FinanceApp.Infrastructure.Repositories
         {
             return await context.Services.ToListAsync();
         }
+
+        public async Task<Service> GetById(int id)
+        {
+            return await context.Services.FirstOrDefaultAsync( p => p.Id == id);
+        }
     }
 }
