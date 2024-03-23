@@ -2,7 +2,7 @@
 
 <h1>Create Transaction</h1>
 
-<form asp-action="Create" method="post">
+<form asp-action="Bill" asp-route-id="@Model.Service.Id"  method="post">
 
     <img src="~/@Model.Service.ImageUrl">
     <div>

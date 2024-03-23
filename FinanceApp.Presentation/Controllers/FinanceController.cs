@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using FinanceApp.Presentation.ViewModels;
+using FinanceApp.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceApp.Controllers;
 
@@ -16,20 +18,33 @@ public class FinanceController : Controller
     private IServiceRepository serviceRepository;
 
     private readonly UserManager<User> userManager;
+    private readonly FinanceAppDbContext myDbContext;
 
-    public FinanceController(ITransactionRepository transactionRepository, IServiceRepository serviceRepository, UserManager<User> userManager)
+    public FinanceController(ITransactionRepository transactionRepository, IServiceRepository serviceRepository, UserManager<User> userManager, FinanceAppDbContext myDbContext)
     {
         this.userManager = userManager;
+        this.myDbContext = myDbContext;
         this.transactionRepository = transactionRepository;
         this.serviceRepository = serviceRepository;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> History()
     {
-        var transaction = await transactionRepository.GetAllAsync();
+        var user = await userManager.GetUserAsync(User);
 
-        return View(transaction);
+        var roles = await userManager.GetRolesAsync(user);
+
+        var result = roles.FirstOrDefault(p => p == "Admin");
+
+        if (result is null)
+        {
+            return View(await myDbContext.Bills.Include("User").Include("Service").Where(p => p.User.Id == user.Id).ToListAsync());
+        }
+
+        
+
+        return View(await myDbContext.Bills.Include("User").Include("Service").ToListAsync());
     }
 
 
@@ -37,7 +52,7 @@ public class FinanceController : Controller
     {
         await this.transactionRepository.DeleteAsync(await transactionRepository.GetByIdAsync(id));
 
-        return RedirectToAction("GetAll");
+        return RedirectToAction("History");
     }
 
     [HttpGet]
@@ -55,7 +70,7 @@ public class FinanceController : Controller
 
         await this.transactionRepository.UpdateAsync(transaction);
 
-        return RedirectToAction("GetAll");
+        return RedirectToAction("History");
     }
 
     [HttpGet]
@@ -72,11 +87,36 @@ public class FinanceController : Controller
 
         var user = await userManager.GetUserAsync(User);
 
-        return View(new PaymentViewModel{
+        return View(new PaymentViewModel
+        {
             Service = service,
             User = user
         });
     }
 
+
+    public async Task<IActionResult> Bill(int id)
+    {
+        var service = await serviceRepository.GetById(id);
+
+        var user = await userManager.GetUserAsync(User);
+
+        var bill = new Bill
+        {
+            PayDate = DateTime.Now,
+            User = user,
+            Service = service
+        };
+
+        await myDbContext.Bills.AddAsync(bill);
+
+        await myDbContext.SaveChangesAsync();
+
+        bill.Id = (await myDbContext.Bills.OrderBy(e => e.PayDate).LastOrDefaultAsync()).Id;
+
+        return View(bill);
+
+
+    }
 
 }

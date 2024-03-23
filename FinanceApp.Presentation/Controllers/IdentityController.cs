@@ -139,10 +139,12 @@ namespace FinanceApp.Presentation.Controllers
             return RedirectPermanent(userdto.ReturnUrl ?? "/");
 
         }
-    }
-    // public async Task<IActionResult> Profile(){
+        public async Task<IActionResult> Profile()
+        {
+            var user = await userManager.GetUserAsync(User);
 
-    //     return
-    // }
+            return View(user);
+        }
+    }
 
 }
