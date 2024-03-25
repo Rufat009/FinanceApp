@@ -1,17 +1,63 @@
 @model PaymentViewModel
 
-<h1>Create Transaction</h1>
 
-<form asp-action="Bill" asp-route-id="@Model.Service.Id"  method="post">
 
-    <img src="~/@Model.Service.ImageUrl">
-    <div>
+<form class="payment-form" asp-action="Bill" asp-route-id="@Model.Service.Id" method="post">
+
+    <div class="payment-div1">
+
+        <img src="~/@Model.Service.ImageUrl">
+        <button type="submit" class="btn btn-primary">Pay</button>
+
+    </div>
+
+    <div class="payment-div2">
         <span>
-            @Model.User.UserName
-            @Model.User.Age
-            @Model.User.Email
+           Name: @Model.User.UserName <br>
+           Email: @Model.User.Email
         </span>
     </div>
-    <button type="submit" class="btn btn-primary">Pay</button>
 
 </form>
+
+
+
+<style>
+    .payment-form  {
+        gap: 30px;
+        position: absolute;
+        display: flex;
+        margin-top: 150px;
+        flex-direction: row;
+    }
+
+    .payment-form img {
+        height: 420px;
+        width: 420px;
+        
+    }
+
+    .payment-div1 {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .payment-div2 {
+        display: flex;
+        flex-direction: column;
+        font-size: 25px;
+    }
+
+     .payment-form button {
+        margin-top: 20px;
+        
+    }
+
+     .payment-div2 span {
+       color: white;
+       font-weight: bold;
+       margin-top: 200px;
+
+    }
+</style>
