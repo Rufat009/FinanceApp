@@ -14,17 +14,15 @@ namespace FinanceApp.Controllers;
 
 public class FinanceController : Controller
 {
-    private ITransactionRepository transactionRepository;
+    private IBillRepository billRepository;
     private IServiceRepository serviceRepository;
 
     private readonly UserManager<User> userManager;
-    private readonly FinanceAppDbContext myDbContext;
 
-    public FinanceController(ITransactionRepository transactionRepository, IServiceRepository serviceRepository, UserManager<User> userManager, FinanceAppDbContext myDbContext)
+    public FinanceController(IBillRepository billRepository, IServiceRepository serviceRepository, UserManager<User> userManager)
     {
         this.userManager = userManager;
-        this.myDbContext = myDbContext;
-        this.transactionRepository = transactionRepository;
+        this.billRepository = billRepository;
         this.serviceRepository = serviceRepository;
     }
 
@@ -39,20 +37,16 @@ public class FinanceController : Controller
 
         if (result is null)
         {
-            return View(await myDbContext.Bills.Include("User").Include("Service").Where(p => p.User.Id == user.Id).ToListAsync());
+            return View((await billRepository.GetAllAsync()).Where(p => p.User.Id == user.Id));
         }
 
-
-
-        return View(await myDbContext.Bills.Include("User").Include("Service").ToListAsync());
+        return View(await billRepository.GetAllAsync());
     }
 
 
     public async Task<IActionResult> Delete(int id)
     {
-        myDbContext.Bills.Remove(await myDbContext.Bills.FirstOrDefaultAsync(p => p.Id == id));
-
-        await myDbContext.SaveChangesAsync();
+        await billRepository.DeleteAsync(id);
 
         return RedirectToAction("History");
     }
@@ -60,7 +54,7 @@ public class FinanceController : Controller
     [HttpGet]
     public async Task<IActionResult> Update(int id)
     {
-       var bill = await myDbContext.Bills.FirstOrDefaultAsync(p => p.Id == id);
+        var bill = await billRepository.GetByIdAsync(id);
 
         return base.View(model: bill);
     }
@@ -70,11 +64,7 @@ public class FinanceController : Controller
     public async Task<IActionResult> Update(Bill bill)
     {
 
-        var result = await myDbContext.Bills.FirstOrDefaultAsync(x => x.Id == bill.Id);
-
-		result.PayDate = bill.PayDate;
-
-		await myDbContext.SaveChangesAsync();
+        await billRepository.UpdateAsync(bill);
 
         return RedirectToAction("History");
     }
@@ -100,28 +90,15 @@ public class FinanceController : Controller
         });
     }
 
-
     public async Task<IActionResult> Bill(int id)
     {
         var service = await serviceRepository.GetById(id);
 
         var user = await userManager.GetUserAsync(User);
 
-        var bill = new Bill
-        {
-            PayDate = DateTime.Now,
-            User = user,
-            Service = service
-        };
-
-        await myDbContext.Bills.AddAsync(bill);
-
-        await myDbContext.SaveChangesAsync();
-
-        bill.Id = (await myDbContext.Bills.OrderBy(e => e.PayDate).LastOrDefaultAsync()).Id;
+        var bill = await billRepository.CreateAsync(service, user);
 
         return View(bill);
-
 
     }
 

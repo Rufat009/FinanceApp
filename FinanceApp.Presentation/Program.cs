@@ -35,7 +35,7 @@ builder.Services.ConfigureApplicationCookie( p => {
 
 builder.Services.AddScoped<IServiceRepository,ServiceRepository>();
 
-builder.Services.AddScoped<ITransactionRepository,TransactionRepository>();
+builder.Services.AddScoped<IBillRepository,BillRepository>();
 
 
 
