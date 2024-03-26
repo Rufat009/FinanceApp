@@ -42,7 +42,7 @@ public class FinanceController : Controller
             return View(await myDbContext.Bills.Include("User").Include("Service").Where(p => p.User.Id == user.Id).ToListAsync());
         }
 
-        
+
 
         return View(await myDbContext.Bills.Include("User").Include("Service").ToListAsync());
     }
@@ -50,7 +50,9 @@ public class FinanceController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        await this.transactionRepository.DeleteAsync(await transactionRepository.GetByIdAsync(id));
+        myDbContext.Bills.Remove(await myDbContext.Bills.FirstOrDefaultAsync(p => p.Id == id));
+
+        await myDbContext.SaveChangesAsync();
 
         return RedirectToAction("History");
     }
@@ -58,17 +60,21 @@ public class FinanceController : Controller
     [HttpGet]
     public async Task<IActionResult> Update(int id)
     {
-        var mytransaction = await this.transactionRepository.GetByIdAsync(id);
+       var bill = await myDbContext.Bills.FirstOrDefaultAsync(p => p.Id == id);
 
-        return base.View(model: mytransaction);
+        return base.View(model: bill);
     }
 
     [HttpPost]
 
-    public async Task<IActionResult> Update(Transaction transaction)
+    public async Task<IActionResult> Update(Bill bill)
     {
 
-        await this.transactionRepository.UpdateAsync(transaction);
+        var result = await myDbContext.Bills.FirstOrDefaultAsync(x => x.Id == bill.Id);
+
+		result.PayDate = bill.PayDate;
+
+		await myDbContext.SaveChangesAsync();
 
         return RedirectToAction("History");
     }
