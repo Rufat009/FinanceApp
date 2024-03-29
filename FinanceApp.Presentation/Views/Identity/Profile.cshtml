@@ -14,9 +14,14 @@
         <input type="text" value="Age: @Model.Age" readonly>
         }
         <input type="email" value="Email: @Model.Email" readonly>
+        <input type="text" value="Balance: @Model.Balance" readonly>
+        <input type="text" value="Abonent Number: @Model.AbonentNumber" readonly>
 
     </form>
-        <button onclick="redirectToAction('/Identity/Edit?id=@Model.Id')">Edit</button>
+        @if(!isAdmin){
+        <button class="edit-button" onclick="redirectToAction('/Identity/Edit?id=@Model.Id')" >Edit</button>
+        }
+        <button class="edit-button" onclick="redirectToAction('/Identity/ChangeBalance')" >Change Balance</button>
 </div>
 
 <style>
@@ -25,8 +30,7 @@
         left: 600px;
         display: flex;
         flex-direction: column;
-        margin-top: 180px;
-        font-size: 30px;
+        margin-top: 80px;
     }
 
     .profile-form p {
@@ -35,6 +39,11 @@
         font-size: 40px;
     }
 
+    .edit-button{
+        background-color: white;
+        max-height: 100px; !important
+        font-size: 10px; !important
+    }
     .profile-form {
         
         opacity: 0.8;

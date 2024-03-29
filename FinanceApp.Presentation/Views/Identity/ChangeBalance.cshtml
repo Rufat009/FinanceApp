@@ -1,33 +1,14 @@
-@model User
-
 @{
     ViewData["Title"] = "Profile";
-    var isAdmin = base.User.IsInRole("Admin");
-
-    var id = Model.Id;
+    double balance = 0;
 }
 
 <div class="profile-div">
-    <form asp-action="Edit" method="post" class="profile-form">
+    <form asp-action="ChangeBalance" method="post" class="profile-form">
         <p class="form-name">Profile</p>
 
-        <label asp-for="@Model.UserName">Name:</label>
-        <input asp-for="@Model.UserName" type="text">
-
-        @if(!isAdmin) {
-        <label asp-for="@Model.Surname">Surname:</label>
-        <input asp-for="@Model.Surname" type="text">
-
-        <label asp-for="@Model.Age">Age:</label>
-        <input asp-for="@Model.Age" type="text">
-        
-        <label asp-for="@Model.AbonentNumber">Abonent Number:</label>
-        <input asp-for="@Model.AbonentNumber" maxlength="5" oninput="maxLengthCheck(this)" type="text">
-        }
-        <label asp-for="@Model.Email">Email:</label>
-        <input asp-for="@Model.Email" type="email">
-        
-        <input hidden asp-for="@Model.Id" type="text">
+        <label asp-for="@balance">Balance:</label>
+        <input asp-for="@balance" type="text">
 
         <button type="submit">Edit</button>
     </form>
@@ -39,7 +20,7 @@
         left: 600px;
         display: flex;
         flex-direction: column;
-        margin-top: 75px;
+        margin-top: 180px;
         font-size: 30px;
     }
 
@@ -95,12 +76,3 @@
         background: #2957d6;
     }
 </style>
-
-
-<script>
-    function maxLengthCheck(object) {
-        if (object.value.length > object.maxLength) {
-            object.value = object.value.slice(0, object.maxLength);
-        }
-    }
-</script>

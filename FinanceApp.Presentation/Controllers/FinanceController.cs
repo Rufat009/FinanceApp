@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using FinanceApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using FinanceApp.Core.Services;
+using System.Security.Claims;
 
 namespace FinanceApp.Controllers;
 
@@ -17,16 +18,16 @@ public class FinanceController : Controller
 {
     private IBillService billService;
     private IServiceRepository serviceRepository;
-
     private readonly UserManager<User> userManager;
     private readonly IServiceService serviceService;
-
-    public FinanceController(IBillService billService, IServiceRepository serviceRepository, UserManager<User> userManager, IServiceService serviceService)
+    private readonly IUserService userService;
+    public FinanceController(IBillService billService, IServiceRepository serviceRepository, UserManager<User> userManager, IServiceService serviceService, IUserService userService)
     {
         this.userManager = userManager;
         this.serviceService = serviceService;
         this.billService = billService;
         this.serviceRepository = serviceRepository;
+        this.userService = userService;
     }
 
     [HttpGet]
@@ -96,5 +97,10 @@ public class FinanceController : Controller
 
     }
 
-
+    [HttpPut]
+    public async Task<IActionResult> Accept(double amount)
+    {
+        await userService.ChangeBalance(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,-amount);
+        return RedirectToAction("Profile","Identity");
+    }
 }

@@ -16,6 +16,7 @@ else
             <span>Date: @item.PayDate</span>
             <span>Username: @item.User.UserName</span>
             <span>Email: @item.User.Email</span>
+            <button onclick="redirectToAction('/Identity/ProfileByAbonentNumber?AbonentNumber= @item.User.AbonentNumber')"style="max-width:150px">Abonent Number: @item.User.AbonentNumber</button>
             @if (isAdmin)
             {
                 <button onclick="redirectToAction('/Finance/Update?id=@item.Id')">Edit</button>
@@ -37,5 +38,6 @@ else
     .get-all-ul {
         display: flex;
         flex-direction: column;
+        align-items: center;
     }
 </style>

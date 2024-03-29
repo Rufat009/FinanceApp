@@ -7,6 +7,7 @@
     decimal Balance = default;
     string Email = string.Empty;
     string Password = string.Empty;
+    int AbonentNumber = 0;
 }
 
 <div style="margin-top: 40px;" class="login-box">
@@ -23,11 +24,18 @@
             <label></label>
             <input asp-for="@Age"  type="number" placeholder="Age">
         </div>
+       <div class="user-box">
+            <label></label>
+            <input asp-for="@AbonentNumber" maxlength="5" type="number" oninput="maxLengthCheck(this)" placeholder="Abonent Number">
+        </div>
         <input hidden asp-for="@Balance" type="text">
 
         <div class="user-box">
             <input asp-for="@Email" type="email" placeholder="Email">
         </div>
+        @* <div class="user-box">
+            <input asp-for="@SubscriberCode" type="text" placeholder="Surname">
+        </div> *@
         <div class="user-box">
             <input asp-for="@Password" type="password" placeholder="Password">
         </div>
@@ -40,3 +48,11 @@
         </a>
     </form>
 </div>
+
+<script>
+    function maxLengthCheck(object) {
+        if (object.value.length > object.maxLength) {
+            object.value = object.value.slice(0, object.maxLength);
+        }
+    }
+</script>

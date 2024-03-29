@@ -11,6 +11,6 @@ namespace FinanceApp.Core.Models
         public DateTime PayDate {get; set;}
         public Service? Service {get;set;} 
         public User? User {get;set;}
-
+        
     }
 }

@@ -4,6 +4,7 @@ using FinanceApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceApp.Presentation.Migrations
 {
     [DbContext(typeof(FinanceAppDbContext))]
-    partial class FinanceAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240329211441_Edit User")]
+    partial class EditUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,14 +93,8 @@ namespace FinanceApp.Presentation.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("MonthCost")
-                        .HasColumnType("float");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("UtilityCost")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -108,9 +105,6 @@ namespace FinanceApp.Presentation.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AbonentNumber")
-                        .HasColumnType("int");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");

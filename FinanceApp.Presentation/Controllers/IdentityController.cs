@@ -4,12 +4,15 @@ using System.Security.Claims;
 using FinanceApp.Core.Dtos;
 using FinanceApp.Core.Models;
 using FinanceApp.Core.Repositories;
+using FinanceApp.Core.Services;
+using FinanceApp.Infrastructure.Data;
 using FinanceApp.Infrastructure.Respositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceApp.Presentation.Controllers;
 
@@ -19,12 +22,16 @@ public class IdentityController : Controller
     private readonly UserManager<User> userManager;
     private readonly RoleManager<IdentityRole> roleManager;
     private readonly SignInManager<User> signInManager;
+    private readonly IUserService userService;
+    private readonly FinanceAppDbContext dbContext;
 
-    public IdentityController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager)
+    public IdentityController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager,IUserService userService,FinanceAppDbContext dbContext)
     {
         this.userManager = userManager;
         this.roleManager = roleManager;
         this.signInManager = signInManager;
+        this.userService = userService;
+        this.dbContext = dbContext;
     }
 
     public async Task<IActionResult> Logout()
@@ -55,7 +62,7 @@ public class IdentityController : Controller
             Surname = userDto.Surname,
             Age = userDto.Age,
             Email = userDto.Email,
-
+            AbonentNumber = userDto.AbonentNumber,
         };
 
         var result = await userManager.CreateAsync(user, userDto.Password);
@@ -145,6 +152,12 @@ public class IdentityController : Controller
         return RedirectPermanent(userdto.ReturnUrl ?? "/");
 
     }
+     public async Task<IActionResult> ProfileByAbonentNumber(int AbonentNumber)
+    {
+        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.AbonentNumber == AbonentNumber);
+
+        return View("Profile",user);
+    }
     public async Task<IActionResult> Profile()
     {
         var user = await userManager.GetUserAsync(User);
@@ -161,21 +174,24 @@ public class IdentityController : Controller
         return View(result);
 
     }
+    [HttpGet]
+    public async Task<IActionResult> ChangeBalance()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ChangeBalance([FromForm]double balance)
+    {
+        await userService.ChangeBalance(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,balance);
+        return RedirectToAction("Profile");
+    }
+
 
     [HttpPost]
     public async Task<IActionResult> Edit(User user)
     {
-        var oldUser = await userManager.GetUserAsync(base.HttpContext.User);
-
-        oldUser.UserName = user.UserName;
-
-        oldUser.Email = user.Email;
-        
-        oldUser.Surname = user.Surname;
-        
-        oldUser.Age = user.Age;
-
-        await userManager.UpdateAsync(oldUser);
+        await userService.UpdateUser(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,user);
         
         return RedirectToAction("Profile");
 

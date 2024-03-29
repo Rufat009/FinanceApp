@@ -46,13 +46,13 @@
         <tr class="item">
             <td>Utility costs</td>
 
-            <td>$300.00</td>
+            <td>$@(Model.Service.UtilityCost)</td>
         </tr>
 
         <tr class="item">
             <td>Cost (3 months)</td>
 
-            <td>$75.00</td>
+            <td>$@(Model.Service.MonthCost * 3)</td>
         </tr>
 
 
@@ -60,7 +60,25 @@
         <tr class="total">
             <td></td>
 
-            <td>Total: $375.00</td>
+            <td>Total: $@(Model.Service.MonthCost + Model.Service.UtilityCost)</td>            
+        </tr>
+        <tr class="total">
+            <td></td>
+
+            <td>Will remain on balance: $@(Model.User.Balance - (Model.Service.MonthCost + Model.Service.UtilityCost)) </td>
+        </tr>
+        <tr class="total">
+            <td></td>
+            @if(Model.User.Balance < Model.Service.MonthCost + Model.Service.UtilityCost)
+            {
+                <td>You dont have enought money on your balance!</td>
+            }else{
+                <td><button onclick="Accept(@(Model.Service.MonthCost + Model.Service.UtilityCost))">Accept</button></td>           
+            }
+        </tr>
+         <tr class="total">
+            <td></td>
+            <td><button onclick=redirectToAction("/Finance/Payment?id=@Model.Service.Id")>Decline</button></td>
         </tr>
 
     </table>
@@ -158,8 +176,6 @@
         font-weight: bold;
     }
 </style>
-
-
 
 
 @* <tr>

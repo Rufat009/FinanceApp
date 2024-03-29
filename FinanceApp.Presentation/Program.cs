@@ -44,7 +44,7 @@ builder.Services.AddScoped<IBillService,BillService>();
 
 builder.Services.AddScoped<IBillRepository,BillRepository>();
 
-
+builder.Services.AddScoped<IUserService,UserService>();
 
 builder.Services.AddScoped<FinanceAppDbContext>();
 
