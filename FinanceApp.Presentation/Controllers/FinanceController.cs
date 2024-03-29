@@ -6,47 +6,39 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
-using FinanceApp.Presentation.ViewModels;
 using FinanceApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using FinanceApp.Core.Services;
 
 namespace FinanceApp.Controllers;
 
+[Authorize]
 public class FinanceController : Controller
 {
-    private IBillRepository billRepository;
+    private IBillService billService;
     private IServiceRepository serviceRepository;
 
     private readonly UserManager<User> userManager;
+    private readonly IServiceService serviceService;
 
-    public FinanceController(IBillRepository billRepository, IServiceRepository serviceRepository, UserManager<User> userManager)
+    public FinanceController(IBillService billService, IServiceRepository serviceRepository, UserManager<User> userManager, IServiceService serviceService)
     {
         this.userManager = userManager;
-        this.billRepository = billRepository;
+        this.serviceService = serviceService;
+        this.billService = billService;
         this.serviceRepository = serviceRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> History()
     {
-        var user = await userManager.GetUserAsync(User);
-
-        var roles = await userManager.GetRolesAsync(user);
-
-        var result = roles.FirstOrDefault(p => p == "Admin");
-
-        if (result is null)
-        {
-            return View((await billRepository.GetAllAsync()).Where(p => p.User.Id == user.Id));
-        }
-
-        return View(await billRepository.GetAllAsync());
+        return View(await billService.History(User));
     }
 
 
     public async Task<IActionResult> Delete(int id)
     {
-        await billRepository.DeleteAsync(id);
+        await billService.DeleteAsync(id);
 
         return RedirectToAction("History");
     }
@@ -54,9 +46,18 @@ public class FinanceController : Controller
     [HttpGet]
     public async Task<IActionResult> Update(int id)
     {
-        var bill = await billRepository.GetByIdAsync(id);
+        try
+        {
+            var bill = await billService.GetByIdAsync(id);
 
-        return base.View(model: bill);
+            return base.View(model: bill);
+        }
+
+        catch (NullReferenceException)
+        {
+            return RedirectToAction("NotFound", "Home");
+        }
+
     }
 
     [HttpPost]
@@ -64,11 +65,12 @@ public class FinanceController : Controller
     public async Task<IActionResult> Update(Bill bill)
     {
 
-        await billRepository.UpdateAsync(bill);
+        await billService.UpdateAsync(bill);
 
         return RedirectToAction("History");
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> Services()
     {
@@ -76,30 +78,23 @@ public class FinanceController : Controller
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> Payment(int id)
     {
-        var service = await serviceRepository.GetById(id);
-
-        var user = await userManager.GetUserAsync(User);
-
-        return View(new PaymentViewModel
-        {
-            Service = service,
-            User = user
-        });
+        return View(await serviceService.Payment(User, id));
     }
 
+    [HttpPost]
     public async Task<IActionResult> Bill(int id)
     {
         var service = await serviceRepository.GetById(id);
 
         var user = await userManager.GetUserAsync(User);
 
-        var bill = await billRepository.CreateAsync(service, user);
+        var bill = await billService.CreateAsync(service, user);
 
         return View(bill);
 
     }
+
 
 }

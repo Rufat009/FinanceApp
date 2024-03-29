@@ -1,9 +1,11 @@
 using System.Reflection;
 using FinanceApp.Core.Models;
 using FinanceApp.Core.Repositories;
+using FinanceApp.Core.Services;
 using FinanceApp.Infrastructure.Data;
 using FinanceApp.Infrastructure.Repositories;
 using FinanceApp.Infrastructure.Respositories;
+using FinanceApp.Infrastructure.Services;
 using FinanceApp.Middlewares;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -30,10 +32,15 @@ builder.Services.AddIdentity<User, IdentityRole>(
 
 builder.Services.ConfigureApplicationCookie( p => {
     p.LoginPath = "/Identity/Login";
-
+    p.AccessDeniedPath = "/Identity/AccessDenied";
 });
 
 builder.Services.AddScoped<IServiceRepository,ServiceRepository>();
+
+builder.Services.AddScoped<IServiceService,ServiceService>();
+
+builder.Services.AddScoped<IBillService,BillService>();
+
 
 builder.Services.AddScoped<IBillRepository,BillRepository>();
 
