@@ -1,0 +1,15 @@
+@model Bill
+
+<h1>Update Finance</h1>
+
+<form asp-action="Update" method="post">
+
+    <input asp-for="@Model.Id" hidden>
+    
+    <div class="form-group">
+        <label asp-for="@Model.PayDate">Description</label>
+        <input asp-for="@Model.PayDate" type="datetime-local" class="form-control">
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>

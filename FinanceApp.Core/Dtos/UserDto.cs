@@ -13,6 +13,6 @@ namespace FinanceApp.Core.Dtos
         public decimal? Balance { get; set; }
         public string? Email { get; set;}
         public string? Password { get; set; }
-
+        public int AbonentNumber {get; set; }
     }
 }

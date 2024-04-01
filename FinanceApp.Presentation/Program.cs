@@ -1,40 +1,60 @@
+using System.Reflection;
+using FinanceApp.Core.Models;
 using FinanceApp.Core.Repositories;
+using FinanceApp.Core.Services;
+using FinanceApp.Infrastructure.Data;
+using FinanceApp.Infrastructure.Repositories;
 using FinanceApp.Infrastructure.Respositories;
+using FinanceApp.Infrastructure.Services;
 using FinanceApp.Middlewares;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
 string? connectionString = builder.Configuration.GetConnectionString("FinanceAppDb");
+builder.Services.AddDbContext<FinanceAppDbContext>(options =>
+{
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+    options.UseSqlServer(connectionString, o =>
     {
-        options.LoginPath = "/Identity/Login";
-        options.ReturnUrlParameter = "returnUrl";
+        o.MigrationsAssembly("FinanceApp.Presentation");
     });
-
-builder.Services.AddScoped<ITransactionRepository>(p =>
-{
-    return new TransactionRepository(new SqlConnection(connectionString));
 });
 
-builder.Services.AddScoped<IUserRepository>(p =>
-{
-    return new UserRepository(new SqlConnection(connectionString));
+
+builder.Services.AddIdentity<User, IdentityRole>(
+).AddEntityFrameworkStores<FinanceAppDbContext>();
+
+builder.Services.ConfigureApplicationCookie( p => {
+    p.LoginPath = "/Identity/Login";
+    p.AccessDeniedPath = "/Identity/AccessDenied";
 });
 
-builder.Services.AddScoped<ILogRepository>(p =>
-{
-    return new FinanceLogRepository(new SqlConnection(connectionString));
-});
+builder.Services.AddScoped<IServiceRepository,ServiceRepository>();
+
+builder.Services.AddScoped<IServiceService,ServiceService>();
+
+builder.Services.AddScoped<IBillService,BillService>();
+
+
+builder.Services.AddScoped<IBillRepository,BillRepository>();
+
+builder.Services.AddScoped<IUserService,UserService>();
+
+builder.Services.AddScoped<FinanceAppDbContext>();
+
+builder.Services.AddScoped<ILogRepository, FinanceLogRepository>();
 
 builder.Services.AddTransient<LogMiddleware>();
 
 var app = builder.Build();
+
+app.UseAuthentication();
 
 if (!app.Environment.IsDevelopment())
 {

@@ -1,25 +1,26 @@
 
-using Dapper;
+
 using FinanceApp.Core.Models;
 using FinanceApp.Core.Repositories;
+using FinanceApp.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 
 namespace FinanceApp.Infrastructure.Respositories
 {
     public class FinanceLogRepository : ILogRepository
     {
-        private readonly SqlConnection connection;
-        public FinanceLogRepository(SqlConnection connection)
+        private readonly FinanceAppDbContext context;
+
+        public FinanceLogRepository(FinanceAppDbContext context)
         {
-            this.connection = connection;
+            this.context = context;
         }
         public async Task CreateAsync(Log myLog)
         {
-            string sql = "insert into Logs (UserId, Url, MethodType, StatusCode, RequestBody, ResponseBody) values (@UserId, @Url, @MethodType, @StatusCode, @RequestBody, @ResponseBody)";
+            await context.Logs.AddAsync(myLog);
+            await context.SaveChangesAsync();
 
-            await connection.ExecuteAsync(sql, myLog);
         }
-
 
     }
 }

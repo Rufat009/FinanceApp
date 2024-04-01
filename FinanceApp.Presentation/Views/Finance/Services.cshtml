@@ -1,0 +1,36 @@
+@model IEnumerable<Service>
+
+
+
+@{
+    ViewData["Title"] = "Services";
+}
+
+<div class="services-div">
+    @foreach(var service in Model ){
+    <a href="/Finance/Payment?id=@service.Id"><img src="~/@service.ImageUrl"></a>
+    }
+</div>
+
+
+<style>
+    .services-div {
+        position: absolute;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+        margin-left: 190px;
+        margin-top: 100px;
+    }
+
+    .services-div img {
+        width: 280px;
+        height: 280px;
+        border-radius: 10px;
+    }
+
+    .services-div img:hover {
+        opacity: 0.7;
+        transition: 0.4s ease;
+    }
+</style>

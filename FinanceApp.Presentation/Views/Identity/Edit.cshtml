@@ -1,0 +1,106 @@
+@model User
+
+@{
+    ViewData["Title"] = "Profile";
+    var isAdmin = base.User.IsInRole("Admin");
+
+    var id = Model.Id;
+}
+
+<div class="profile-div">
+    <form asp-action="Edit" method="post" class="profile-form">
+        <p class="form-name">Profile</p>
+
+        <label asp-for="@Model.UserName">Name:</label>
+        <input asp-for="@Model.UserName" type="text">
+
+        @if(!isAdmin) {
+        <label asp-for="@Model.Surname">Surname:</label>
+        <input asp-for="@Model.Surname" type="text">
+
+        <label asp-for="@Model.Age">Age:</label>
+        <input asp-for="@Model.Age" type="text">
+        
+        <label asp-for="@Model.AbonentNumber">Abonent Number:</label>
+        <input asp-for="@Model.AbonentNumber" maxlength="5" oninput="maxLengthCheck(this)" type="text">
+        }
+        <label asp-for="@Model.Email">Email:</label>
+        <input asp-for="@Model.Email" type="email">
+        
+        <input hidden asp-for="@Model.Id" type="text">
+
+        <button type="submit">Edit</button>
+    </form>
+</div>
+
+<style>
+    .profile-div {
+        position: absolute;
+        left: 600px;
+        display: flex;
+        flex-direction: column;
+        margin-top: 75px;
+        font-size: 30px;
+    }
+
+    .profile-form p {
+        font-weight: bold;
+        color: #01939c;
+        font-size: 40px;
+    }
+
+    .profile-form {
+        
+        opacity: 0.8;
+        position: relative;
+        background: black;
+        max-width: 360px;
+        padding: 45px;
+        text-align: center;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        border-radius: 15px;
+    }
+
+    .profile-form input,
+    .profile-form textarea {
+        outline: 0;
+        background: #f2f2f2;
+        width: 100%;
+        border: 0;
+        margin: 0 0 15px;
+        padding: 15px;
+        box-sizing: border-box;
+        font-size: 14px;
+        border-radius: 15px;
+    }
+
+    .profile-form button {
+        text-transform: uppercase;
+        outline: 0;
+        background: #3324be;
+        width: 100%;
+        border: 0;
+        padding: 15px;
+        color: #FFFFFF;
+        font-size: 14px;
+        border-radius: 15px;
+        -webkit-transition: all 0.3 ease;
+        transition: all 0.3 ease;
+        cursor: pointer;
+    }
+
+    .profile-form button:hover,
+    .profile-form button:active,
+    .profile-form button:focus {
+        background: #2957d6;
+    }
+</style>
+
+
+<script>
+    function maxLengthCheck(object) {
+        if (object.value.length > object.maxLength) {
+            object.value = object.value.slice(0, object.maxLength);
+        }
+    }
+</script>

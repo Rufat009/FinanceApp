@@ -1,5 +1,7 @@
 ﻿@{
     bool isAuthenticated = base.User.Identity.IsAuthenticated;
+    bool isAdmin = base.User.IsInRole("Admin");
+
 }
 
 <!DOCTYPE html>
@@ -10,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FinanceApp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> 
     <link rel="stylesheet" href="~/FinanceApp.styles.css" asp-append-version="true" />
     <title>Finance App</title>
 </head>
@@ -29,15 +31,27 @@
         <ul class="nav-links">
             @if (isAuthenticated)
             {
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Create">Service Payment</a></li>
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="LogOut">Logout</a></li>
+               // <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Create">Service Payment</a></li>
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Services">Services</a>
+                </li>
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="History">History</a></li>
+
+                <li>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Profile">Profile</a>
+                </li>
             }
-            <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="GetAll">History</a></li>
             @if (!isAuthenticated)
             {
                 <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Login">Login</a></li>
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Services">Services</a>
+                </li>
+
                 <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity"
                         asp-action="Registration">Registration</a></li>
+            }
+            @if (isAuthenticated)
+            {
+                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="LogOut">Logout</a></li>
             }
         </ul>
     </nav>

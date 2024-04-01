@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Bill>
+@{
+    bool isAdmin = base.User.IsInRole("Admin");
+
+}
+
+@if (!Model.Any())
+{
+    <h1 class="text-center" style="padding-top: 300px; color: #fff">There is no finances!</h1>
+}
+else
+{
+    <ul class="get-all-ul text-center" style="padding-top: 100px;">
+        @foreach (var item in Model)
+        {
+            <span>Date: @item.PayDate</span>
+            <span>Username: @item.User.UserName</span>
+            <span>Email: @item.User.Email</span>
+            <button onclick="redirectToAction('/Identity/ProfileByAbonentNumber?AbonentNumber= @item.User.AbonentNumber')"style="max-width:150px">Abonent Number: @item.User.AbonentNumber</button>
+            @if (isAdmin)
+            {
+                <button onclick="redirectToAction('/Finance/Update?id=@item.Id')">Edit</button>
+                <button onclick="redirectToAction('/Finance/Delete?id=@item.Id')">Delete</button>
+            }
+            <br />
+
+        }
+    </ul>
+}
+
+
+<style>
+    .get-all-ul span {
+        color: #fff;
+        font-size: 20px;
+    }
+
+    .get-all-ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>

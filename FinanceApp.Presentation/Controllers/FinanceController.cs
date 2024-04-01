@@ -1,49 +1,106 @@
-﻿using FinanceApp.Core.Dtos;
+﻿using System.Formats.Asn1;
+using FinanceApp.Core.Models;
+using FinanceApp.Core.Dtos;
 using FinanceApp.Core.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
+using FinanceApp.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using FinanceApp.Core.Services;
+using System.Security.Claims;
 
 namespace FinanceApp.Controllers;
 
+[Authorize]
 public class FinanceController : Controller
 {
-    private ITransactionRepository transactionRepository;
-
-    public FinanceController(ITransactionRepository transactionRepository)
+    private IBillService billService;
+    private IServiceRepository serviceRepository;
+    private readonly UserManager<User> userManager;
+    private readonly IServiceService serviceService;
+    private readonly IUserService userService;
+    public FinanceController(IBillService billService, IServiceRepository serviceRepository, UserManager<User> userManager, IServiceService serviceService, IUserService userService)
     {
-        this.transactionRepository = transactionRepository;
+        this.userManager = userManager;
+        this.serviceService = serviceService;
+        this.billService = billService;
+        this.serviceRepository = serviceRepository;
+        this.userService = userService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> History()
     {
-        var transaction = await transactionRepository.GetAllAsync();
-
-        return View(transaction);
+        return View(await billService.History(User));
     }
 
-    [Authorize]
-    public IActionResult Create()
+
+    public async Task<IActionResult> Delete(int id)
     {
-        return View();
+        await billService.DeleteAsync(id);
+
+        return RedirectToAction("History");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Update(int id)
+    {
+        try
+        {
+            var bill = await billService.GetByIdAsync(id);
+
+            return base.View(model: bill);
+        }
+
+        catch (NullReferenceException)
+        {
+            return RedirectToAction("NotFound", "Home");
+        }
+
     }
 
     [HttpPost]
-    [Authorize]
-    public IActionResult Create(TransactionDto transactionDto)
+
+    public async Task<IActionResult> Update(Bill bill)
     {
-        if (transactionDto.Description == null)
-        {
-            return BadRequest("None description");
-        }
 
-        if (transactionDto.Amount <= 0)
-        {
-            return BadRequest("Amount can not be less than 0");
-        }
+        await billService.UpdateAsync(bill);
 
-        transactionRepository.CreateAsync(transactionDto);
+        return RedirectToAction("History");
+    }
 
-        return RedirectToAction("GetAll", "Finance");
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> Services()
+    {
+        return View(await serviceRepository.GetAll());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Payment(int id)
+    {
+        return View(await serviceService.Payment(User, id));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Bill(int id)
+    {
+        var service = await serviceRepository.GetById(id);
+
+        var user = await userManager.GetUserAsync(User);
+
+        var bill = await billService.CreateAsync(service, user);
+
+        return View(bill);
+
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Accept(double amount)
+    {
+        await userService.ChangeBalance(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,-amount);
+        return RedirectToAction("Profile","Identity");
     }
 }
