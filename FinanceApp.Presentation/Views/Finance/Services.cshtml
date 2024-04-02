@@ -2,15 +2,35 @@
 
 
 
+
 @{
     ViewData["Title"] = "Services";
+
+    string service = string.Empty;
 }
 
+
+
+
+
 <div class="services-div">
-    @foreach(var service in Model ){
-    <a href="/Finance/Payment?id=@service.Id"><img src="~/@service.ImageUrl"></a>
+
+    <form asp-controller="Finance" asp-action="Search" class="form-inline my-2 my-lg-0">
+        <input type="text" name="service" />
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+
+    @if (Model.Any() == false)
+    {
+        <p class="text-white">Here is nothing</p>
     }
+    @foreach (var serviceItem in Model)
+    {
+        <a href="/Finance/Payment?id=@serviceItem.Id"><img src="~/@serviceItem.ImageUrl"></a>
+    }
+    <a asp-action="AddService" type="button" class="btn btn-primary">Add Service</a>
 </div>
+
 
 
 <style>
@@ -32,5 +52,9 @@
     .services-div img:hover {
         opacity: 0.7;
         transition: 0.4s ease;
+    }
+
+    .search {
+        margin-top: 100px;
     }
 </style>

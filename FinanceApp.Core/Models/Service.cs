@@ -13,5 +13,6 @@ namespace FinanceApp.Core.Models
         public string? ImageUrl {get; set;}
         public double UtilityCost {get; set;}
         public double MonthCost {get; set;}
+        public double ServiceCost {get; set;}
     }
 }

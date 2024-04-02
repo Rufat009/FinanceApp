@@ -17,6 +17,8 @@ namespace FinanceApp.Infrastructure.Data
         public DbSet<Service> Services {get; set;}
 
 
-          public FinanceAppDbContext(DbContextOptions<FinanceAppDbContext> options) : base(options) {}
+        public FinanceAppDbContext(DbContextOptions<FinanceAppDbContext> options) : base(options) {}
+
+        
     }
 }
