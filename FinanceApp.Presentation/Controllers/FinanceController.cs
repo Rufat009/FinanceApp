@@ -153,4 +153,13 @@ public class FinanceController : Controller
             return RedirectToAction("Error", "ErrorPage", new { message = ex.Message });
         }
     }
+    [HttpDelete]
+    public async Task<IActionResult> DeleteUserService(int id)
+    {
+        await this.serviceService.DeleteServiceAsync(id);
+
+        return base.Ok();
+    }
+
+    
 }

@@ -81,6 +81,13 @@ namespace FinanceApp.Infrastructure.Services
             return result;
         }
 
+        public async Task DeleteServiceAsync(int id)
+        {
+            var service = await this.dbContext.Services.FirstOrDefaultAsync(service => service.Id == id);
 
+            this.dbContext.Remove<Service>(service!);
+
+            await this.dbContext.SaveChangesAsync();
+        }
     }
 }

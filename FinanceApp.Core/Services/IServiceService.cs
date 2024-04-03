@@ -18,6 +18,7 @@ namespace FinanceApp.Core.Services
         public  Task<IEnumerable<Service>> Search(string service);
 
         public Task Add(ServiceDto serviceDto);
+        public  Task DeleteServiceAsync(int id);
         
     }
 }

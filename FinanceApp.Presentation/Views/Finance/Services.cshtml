@@ -28,10 +28,65 @@
     <div class="gallery">
         @foreach (var serviceItem in Model)
         {
-            <a href="/Finance/Payment?id=@serviceItem.Id"><img src="~/@serviceItem.ImageUrl"></a>
+            <p id="@serviceItem.Id">
+                <a href="/Finance/Payment?id=@serviceItem.Id"><img src="~/@serviceItem.ImageUrl">
+                </a>
+                @if (isAdmin)
+                {
+                    <button class="deleteButton" onclick="DeleteService(@serviceItem.Id)">Delete Service</button>
+                }
+            </p>
         }
     </div>
 </div>
+
+
+<script>
+    async function DeleteService(id) {
+        if (confirm("Confirm that you want this service to be deleted.")) {
+            await fetch('http://localhost:5074/Finance/DeleteUserService/' + id,
+                {
+                    method: 'DELETE'
+                }).then(res => {
+                    if (res.ok) {
+                        let child = document.getElementById(id);
+
+                        child.parentElement.removeChild(child);
+                    } else if (res.status === 404) {
+                        alert('Item not found.');
+                    } else {
+                        alert('Service cannot be deleted because it has bills');
+                    }
+                });
+        }
+    };
+
+</script>
+
+<style>
+    .deleteButton {
+        margin-top: 10px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        width: 200px;
+        padding: 8px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .deleteButton:hover {
+        transition: 0.3s ease;
+        background-color: #7a101b;
+    }
+
+    .deleteButton-container {
+        margin-top: 10px;
+    }
+</style>
 
 <style>
     .services-div {
