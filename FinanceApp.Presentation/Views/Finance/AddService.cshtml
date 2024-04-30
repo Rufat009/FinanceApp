@@ -1,0 +1,44 @@
+@model ServiceDto
+
+@{
+    ViewData["Title"] = "Add Service";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (ViewData.ModelState.IsValid)
+{
+    <p>Service added successfully.</p>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Error:</strong> There were some validation errors.
+    </div>
+}
+
+<form enctype="multipart/form-data" asp-controller="Finance" asp-action="AddService" method="post">
+    
+    <div class="text-danger" asp-validation-summary="All"></div>
+
+    <div class="form-group">
+        <label asp-for="@Model.ServiceImageUrl">Service ImageUrl:</label>
+       <input asp-for="@Model.ServiceImageUrl" class="form-control-file" accept="image/*" type = "file">
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.ServiceName">Service Name:</label>
+        <textarea asp-for="@Model.ServiceName" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.ServiceCost">Service Cost:</label>
+        <textarea asp-for="@Model.ServiceCost" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.MonthCost">Month Cost:</label>
+        <textarea asp-for="@Model.MonthCost" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

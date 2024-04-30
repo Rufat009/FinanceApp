@@ -7,6 +7,7 @@ using FinanceApp.Infrastructure.Repositories;
 using FinanceApp.Infrastructure.Respositories;
 using FinanceApp.Infrastructure.Services;
 using FinanceApp.Middlewares;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
@@ -26,6 +27,7 @@ builder.Services.AddDbContext<FinanceAppDbContext>(options =>
     });
 });
 
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 builder.Services.AddIdentity<User, IdentityRole>(
 ).AddEntityFrameworkStores<FinanceAppDbContext>();

@@ -1,7 +1,6 @@
 ﻿@{
     bool isAuthenticated = base.User.Identity.IsAuthenticated;
     bool isAdmin = base.User.IsInRole("Admin");
-
 }
 
 <!DOCTYPE html>
@@ -10,51 +9,38 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FinanceApp</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> 
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FinanceApp.styles.css" asp-append-version="true" />
-    <title>Finance App</title>
-</head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" </head>
 
 <body>
-    <nav>
-        <div class="logo" style="display: flex;align-items: center;">
-            <a href="/Home/Index"
-                style="color:#01939c; font-size:26px; font-weight:bold; letter-spacing: 1px;margin-left: 20px; text-decoration:none">FinanceApp</a>
-        </div>
-        <div class="finance">
-            <div class="line1"></div>
-            <div class="line2"></div>
-            <div class="line3"></div>
-        </div>
-        <ul class="nav-links">
+    <header class="header">
+        <a href="/Home/Index" class="logo">Finance App</a>
+
+        <div class="bx bx-menu" id="menu-icon"></div>
+
+        <nav class="navbar">
             @if (isAuthenticated)
             {
-               // <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Create">Service Payment</a></li>
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Services">Services</a>
-                </li>
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="History">History</a></li>
-
-                <li>
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Profile">Profile</a>
-                </li>
+                <a asp-controller="Finance" asp-action="Services">Services</a>
+                <a asp-controller="Finance" asp-action="History">History</a>
+                <a asp-controller="Identity" asp-action="Profile">Profile</a>
             }
             @if (!isAuthenticated)
             {
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Login">Login</a></li>
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Finance" asp-action="Services">Services</a>
-                </li>
-
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity"
-                        asp-action="Registration">Registration</a></li>
+                <a asp-controller="Identity" asp-action="Login">Login</a>
+                <a asp-controller="Identity" asp-action="Registration">Registration</a>
             }
             @if (isAuthenticated)
             {
-                <li><a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="LogOut">Logout</a></li>
+                <a asp-controller="Identity" asp-action="LogOut">Logout</a>
             }
-        </ul>
-    </nav>
+
+            <span class="active-nav"></span>
+        </nav>
+    </header>
 
     <div class="container">
         <main role="main" class="pb-3">
@@ -69,94 +55,3 @@
 </body>
 
 </html>
-
-<style>
-    body {
-        overflow-x: hidden;
-    }
-
-    nav {
-        height: 4.5rem;
-        width: 100vw;
-        background-color: #131418;
-        box-shadow: 0 3px 20px rgba(0, 0, 0, 0.2);
-        display: flex;
-        position: fixed;
-        z-index: 10;
-        color: #fff !important;
-    }
-
-    .logo {
-        padding: 1vh 1vw;
-        text-align: center;
-    }
-
-    .logo img {
-        height: 5rem;
-        width: 5rem;
-    }
-
-    .nav-links {
-        display: flex;
-        list-style: none;
-        width: 88vw;
-        padding: 0 0.7vw;
-        justify-content: space-evenly;
-        align-items: center;
-        text-transform: uppercase;
-    }
-
-    .nav-links li a {
-        padding-top: 25px;
-        text-decoration: none;
-        margin: 0 0.7vw;
-        color: rgb(216, 209, 209) !important;
-    }
-
-    .nav-links li a:hover {
-        color: #ffffff !important;
-    }
-
-    .nav-links li {
-        position: relative;
-    }
-
-    .nav-links li a:hover::before {
-        width: 80%;
-    }
-
-    .login-button {
-        background-color: transparent;
-        border: 1.5px solid #f2f5f7;
-        border-radius: 2em;
-        padding: 0.6rem 0.8rem;
-        margin-left: 2vw;
-        font-size: 1rem;
-        cursor: pointer;
-
-    }
-
-    .login-button:hover {
-        color: #131418;
-        background-color: #f2f5f7;
-        border: 1.5px solid #f2f5f7;
-        transition: all ease-in-out 350ms;
-    }
-
-    .join-button {
-        color: #131418;
-        background-color: #61DAFB;
-        border: 1.5px solid #61DAFB;
-        border-radius: 2em;
-        padding: 0.6rem 0.8rem;
-        font-size: 1rem;
-        cursor: pointer;
-    }
-
-    .join-button:hover {
-        color: #f2f5f7;
-        background-color: transparent;
-        border: 1.5px solid #f2f5f7;
-        transition: all ease-in-out 350ms;
-    }
-</style>

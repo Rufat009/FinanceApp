@@ -2,14 +2,18 @@
 
 <h1>Update Finance</h1>
 
-<form asp-action="Update" method="post">
-
-    <input asp-for="@Model.Id" hidden>
-    
-    <div class="form-group">
-        <label asp-for="@Model.PayDate">Description</label>
-        <input asp-for="@Model.PayDate" type="datetime-local" class="form-control">
+<form asp-action="Update" method="post" class="ring">
+    <i style="--clr:#00ff0a;"></i>
+    <i style="--clr:#ff0057;"></i>
+    <i style="--clr:#fffd44;"></i>
+    <div class="login">
+        <h2>Update</h2>
+        <input asp-for="@Model.Id" hidden>
+        <div class="inputBx">
+            <input asp-for="@Model.PayDate" type="datetime-local">
+        </div>
+        <div class="inputBx">
+            <input type="submit" value="Update">
+        </div>
     </div>
-    <br>
-    <button type="submit" class="btn btn-primary">Update</button>
 </form>

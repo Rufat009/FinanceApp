@@ -7,7 +7,7 @@
     <form asp-action="ChangeBalance" method="post" class="profile-form">
         <p class="form-name">Profile</p>
 
-        <label asp-for="@balance">Balance:</label>
+        <label asp-for="@balance" style="font-size: 25px;">Balance:</label>
         <input asp-for="@balance" type="text">
 
         <button type="submit">Edit</button>
@@ -16,63 +16,23 @@
 
 <style>
     .profile-div {
-        position: absolute;
-        left: 600px;
-        display: flex;
-        flex-direction: column;
-        margin-top: 180px;
-        font-size: 30px;
+        margin-top: 100px;
     }
 
-    .profile-form p {
-        font-weight: bold;
-        color: #01939c;
-        font-size: 40px;
+    .form-name {
+        font-size: 50px;
     }
 
-    .profile-form {
-        
-        opacity: 0.8;
-        position: relative;
-        background: black;
-        max-width: 360px;
-        padding: 45px;
-        text-align: center;
-        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-        border-radius: 15px;
-    }
-
-    .profile-form input,
-    .profile-form textarea {
-        outline: 0;
-        background: #f2f2f2;
-        width: 100%;
-        border: 0;
-        margin: 0 0 15px;
-        padding: 15px;
-        box-sizing: border-box;
-        font-size: 14px;
-        border-radius: 15px;
+    .profile-form input {
+        margin-left: 30px;
+        margin-top: -10px;
+        padding: 8px 15px;
+        width: 250px;
+        border-radius: 10px;
     }
 
     .profile-form button {
-        text-transform: uppercase;
-        outline: 0;
-        background: #3324be;
-        width: 100%;
-        border: 0;
-        padding: 15px;
-        color: #FFFFFF;
-        font-size: 14px;
-        border-radius: 15px;
-        -webkit-transition: all 0.3 ease;
-        transition: all 0.3 ease;
-        cursor: pointer;
-    }
-
-    .profile-form button:hover,
-    .profile-form button:active,
-    .profile-form button:focus {
-        background: #2957d6;
+        padding: 8px 30px;
+        border-radius: 10px;
     }
 </style>

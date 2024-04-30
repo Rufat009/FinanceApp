@@ -10,6 +10,8 @@ using FinanceApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using FinanceApp.Core.Services;
 using System.Security.Claims;
+using FluentValidation;
+using FinanceApp.Infrastructure.Services;
 
 namespace FinanceApp.Controllers;
 
@@ -17,17 +19,22 @@ namespace FinanceApp.Controllers;
 public class FinanceController : Controller
 {
     private IBillService billService;
+    private IServiceService addserviceService;
     private IServiceRepository serviceRepository;
     private readonly UserManager<User> userManager;
+
+    private readonly IValidator<ServiceDto> serviceValidator;
     private readonly IServiceService serviceService;
     private readonly IUserService userService;
-    public FinanceController(IBillService billService, IServiceRepository serviceRepository, UserManager<User> userManager, IServiceService serviceService, IUserService userService)
+    public FinanceController(IBillService billService, IServiceRepository serviceRepository, UserManager<User> userManager, IServiceService serviceService, IUserService userService, IValidator<ServiceDto> serviceValidator,IServiceService addserviceService)
     {
         this.userManager = userManager;
         this.serviceService = serviceService;
         this.billService = billService;
         this.serviceRepository = serviceRepository;
         this.userService = userService;
+        this.serviceValidator = serviceValidator;
+        this.addserviceService = addserviceService;
     }
 
     [HttpGet]
@@ -100,7 +107,59 @@ public class FinanceController : Controller
     [HttpPut]
     public async Task<IActionResult> Accept(double amount)
     {
-        await userService.ChangeBalance(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,-amount);
-        return RedirectToAction("Profile","Identity");
+        await userService.ChangeBalance(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, -amount);
+        return RedirectToAction("Profile", "Identity");
     }
+
+    [HttpGet]
+    public IActionResult AddService(){
+
+        return View();
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Search(string service)
+    {
+        var result = await serviceService.Search(service);
+
+        return View("Services", result);
+    }
+
+
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AddService(ServiceDto serviceDto)
+    {
+        try
+        {
+            var result = serviceValidator.Validate(serviceDto);
+            if (result.IsValid == false)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(
+                        key: error.PropertyName,
+                        errorMessage: error.ErrorMessage
+                    );
+                }
+                return View("AddService");
+            }
+            await serviceService.Add(serviceDto);
+            return RedirectToAction("Services");
+        }
+        catch (Exception ex)
+        {
+            return RedirectToAction("Error", "ErrorPage", new { message = ex.Message });
+        }
+    }
+    [HttpDelete]
+    public async Task<IActionResult> DeleteUserService(int id)
+    {
+        await this.serviceService.DeleteServiceAsync(id);
+
+        return base.Ok();
+    }
+
+    
 }

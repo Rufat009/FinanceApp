@@ -1,36 +1,151 @@
 @model IEnumerable<Service>
 
-
-
 @{
     ViewData["Title"] = "Services";
+    bool isAdmin = base.User.IsInRole("Admin");
+
+    string service = string.Empty;
+}
+
+
+@if (Model.Any() == false)
+{
+    <p class="text-white">Here is nothing</p>
 }
 
 <div class="services-div">
-    @foreach(var service in Model ){
-    <a href="/Finance/Payment?id=@service.Id"><img src="~/@service.ImageUrl"></a>
+    <form asp-controller="Finance" asp-action="Search">
+        <input type="text" name="service" placeholder="Search By Name . . ." />
+        <button type="submit">Search</button>
+    </form>
+
+    @if (isAdmin)
+    {
+        <a class="add-service" asp-action="AddService" type="button">Add Service</a>
     }
+
+
+    <div class="gallery">
+        @foreach (var serviceItem in Model)
+        {
+            <p id="@serviceItem.Id">
+                <a href="/Finance/Payment?id=@serviceItem.Id"><img src="~/@serviceItem.ImageUrl">
+                </a>
+                @if (isAdmin)
+                {
+                    <button class="deleteButton" onclick="DeleteService(@serviceItem.Id)">Delete Service</button>
+                }
+            </p>
+        }
+    </div>
 </div>
 
 
+<script>
+    async function DeleteService(id) {
+        if (confirm("Confirm that you want this service to be deleted.")) {
+            await fetch('http://localhost:5074/Finance/DeleteUserService/' + id,
+                {
+                    method: 'DELETE'
+                }).then(res => {
+                    if (res.ok) {
+                        let child = document.getElementById(id);
+
+                        child.parentElement.removeChild(child);
+                    } else if (res.status === 404) {
+                        alert('Item not found.');
+                    } else {
+                        alert('Service cannot be deleted because it has bills');
+                    }
+                });
+        }
+    };
+
+</script>
+
+<style>
+    .deleteButton {
+        margin-top: 10px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        width: 200px;
+        padding: 8px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .deleteButton:hover {
+        transition: 0.3s ease;
+        background-color: #7a101b;
+    }
+
+    .deleteButton-container {
+        margin-top: 10px;
+    }
+</style>
+
 <style>
     .services-div {
-        position: absolute;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 40px;
-        margin-left: 190px;
         margin-top: 100px;
     }
 
-    .services-div img {
-        width: 280px;
-        height: 280px;
+    .services-div form input {
+        width: 300px;
+        padding: 10px 15px;
         border-radius: 10px;
+        background-color: #ededed;
     }
 
-    .services-div img:hover {
-        opacity: 0.7;
-        transition: 0.4s ease;
+    .services-div form button {
+        height: 34px;
+        border-radius: 10px;
+        padding-left: 30px;
+        padding-right: 30px;
+        background-color: #28565ed6;
+        color: #fff;
+    }
+
+    .services-div form button:hover {
+        background-color: #0d4b55d6;
+        transition: .2s ease;
+    }
+
+    .add-service {
+        width: 400px;
+        padding: 10px 15px;
+        border-radius: 10px;
+        text-align: center;
+        color: #fff;
+        text-decoration: none;
+        margin-top: 10px;
+        background-color: #112e42;
+    }
+
+    .add-service:hover {
+        color: #fff;
+        background-color: #002842;
+        transition: .2s ease;
+    }
+
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 50px;
+        margin: 50px 0 50px 80px;
+    }
+
+    .gallery img {
+        border-radius: 10px;
+        width: 200px;
+        height: 200px;
+    }
+
+    .gallery img:hover {
+        opacity: 0.8;
+        transition: .1s;
     }
 </style>

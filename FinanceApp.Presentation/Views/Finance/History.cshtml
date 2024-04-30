@@ -10,26 +10,72 @@
 }
 else
 {
-    <ul class="get-all-ul text-center" style="padding-top: 100px;">
+    <ul class="get-all-ul text-center" style="padding-top: 75px;">
         @foreach (var item in Model)
         {
-            <span>Date: @item.PayDate</span>
-            <span>Username: @item.User.UserName</span>
-            <span>Email: @item.User.Email</span>
-            <button onclick="redirectToAction('/Identity/ProfileByAbonentNumber?AbonentNumber= @item.User.AbonentNumber')"style="max-width:150px">Abonent Number: @item.User.AbonentNumber</button>
-            @if (isAdmin)
-            {
-                <button onclick="redirectToAction('/Finance/Update?id=@item.Id')">Edit</button>
-                <button onclick="redirectToAction('/Finance/Delete?id=@item.Id')">Delete</button>
-            }
-            <br />
-
+            <div class="card">
+                <span style="margin-top: 20px;">Date: @item.PayDate</span>
+                <span>Username: @item.User.UserName</span>
+                <span>Email: @item.User.Email</span>
+                <button class="abonent" onclick="redirectToAction('/Identity/ProfileByAbonentNumber?AbonentNumber= @item.User.AbonentNumber')">Abonent Number: @item.User.AbonentNumber</button>
+                @if (isAdmin)
+                {
+                    <button class="edit" onclick="redirectToAction('/Finance/Update?id=@item.Id')">Edit</button>
+                    <button class="delete" style="margin-bottom: 10px;" onclick="redirectToAction('/Finance/Delete?id=@item.Id')">Delete</button>
+                }
+                <br/>
+            </div>
         }
     </ul>
 }
 
 
 <style>
+    .abonent {
+        color: #fff;
+        background-color: #274e91;
+        transition: .3s;
+    }
+
+    .abonent:hover {
+        background-color: #0c3274;
+    }
+
+    .edit {
+        color: #fff;
+        background-color: #918c27;
+        transition: .3s;
+    }
+
+    .edit:hover {
+        background-color: #787308;
+    }
+
+    .delete {
+        color: #fff;
+        background-color: #811313;
+        transition: .3s;
+    }
+
+    .delete:hover {
+        background-color: #710808;
+    }
+
+    .card {
+        margin-top: 40px;
+        background-color: #112e42;
+        border-radius: 10px;
+        width: 100%;
+        align-items: center;
+    }
+
+    .card button {
+        padding: 12px 20px;
+        width: 500px;
+        margin-top: 10px;
+        border-radius: 5px;
+    }
+
     .get-all-ul span {
         color: #fff;
         font-size: 20px;

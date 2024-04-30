@@ -25,7 +25,7 @@ public class IdentityController : Controller
     private readonly IUserService userService;
     private readonly FinanceAppDbContext dbContext;
 
-    public IdentityController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager,IUserService userService,FinanceAppDbContext dbContext)
+    public IdentityController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager, IUserService userService, FinanceAppDbContext dbContext)
     {
         this.userManager = userManager;
         this.roleManager = roleManager;
@@ -152,11 +152,13 @@ public class IdentityController : Controller
         return RedirectPermanent(userdto.ReturnUrl ?? "/");
 
     }
-     public async Task<IActionResult> ProfileByAbonentNumber(int AbonentNumber)
+
+
+    public async Task<IActionResult> ProfileByAbonentNumber(int AbonentNumber)
     {
         var user = await dbContext.Users.FirstOrDefaultAsync(x => x.AbonentNumber == AbonentNumber);
 
-        return View("Profile",user);
+        return View("Profile", user);
     }
     public async Task<IActionResult> Profile()
     {
@@ -172,8 +174,18 @@ public class IdentityController : Controller
         var result = await userManager.FindByIdAsync(id);
 
         return View(result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(User user)
+    {
+        await userService.UpdateUser(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, user);
+
+        return RedirectToAction("Profile");
 
     }
+
+
     [HttpGet]
     public async Task<IActionResult> ChangeBalance()
     {
@@ -181,25 +193,49 @@ public class IdentityController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> ChangeBalance([FromForm]double balance)
+    public async Task<IActionResult> ChangeBalance([FromForm] double balance)
     {
-        await userService.ChangeBalance(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,balance);
+        await userService.ChangeBalance(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, balance);
         return RedirectToAction("Profile");
     }
 
 
-    [HttpPost]
-    public async Task<IActionResult> Edit(User user)
-    {
-        await userService.UpdateUser(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,user);
-        
-        return RedirectToAction("Profile");
 
-    }
 
     [AllowAnonymous]
-    public IActionResult AccessDenied(){
+    public IActionResult AccessDenied()
+    {
         return View();
     }
+
+
+    // [HttpPut]
+    // [Authorize]
+    // public async Task<IActionResult> ChangeAvatar(IFormFile avatar)
+    // {
+    //     var userName = User.Identity.Name;
+    //     var fileName = $"{userName}{Path.GetExtension(avatar.FileName)}";
+
+    //     var destinationFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+    //     var destinationPath = Path.Combine(destinationFolder, fileName); 
+
+    //     if (System.IO.File.Exists(destinationPath))
+    //     {
+    //         System.IO.File.Delete(destinationPath);
+    //     }
+
+    //     Directory.CreateDirectory(destinationFolder);
+
+    //     using (var stream = new FileStream(destinationPath, FileMode.Create))
+    //     {
+    //         await avatar.CopyToAsync(stream);
+    //     }
+
+    //     var relativePath = "/uploads/" + fileName;
+
+    //     await userService.UpdateAvatar(relativePath, User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+    //     return RedirectToAction("Profile");
+    // }
 }
 

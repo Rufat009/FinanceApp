@@ -10,5 +10,6 @@ namespace FinanceApp.Core.Services
     {
         public Task ChangeBalance(string id,double toadd);
         public Task UpdateUser(string id,User user);
+        public Task<User> Search(string abonentNumber);
     }
 }
