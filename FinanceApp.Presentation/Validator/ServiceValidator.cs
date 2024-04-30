@@ -20,9 +20,6 @@ namespace FinanceApp.Presentation.Validator
             RuleFor(service => service.ServiceCost)
            .NotEmpty().GreaterThan(0).WithMessage("The Service Cost is required.");
 
-            RuleFor(service => service.MonthCost)
-           .NotEmpty().GreaterThan(0).WithMessage("The Month Cost is required.");
-
         }
     }
 }

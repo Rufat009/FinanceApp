@@ -36,7 +36,8 @@ namespace FinanceApp.Infrastructure.Services
         {
 
             var bill = await billRepository.GetByIdAsync(id);
-            if(bill is null) {
+            if (bill is null)
+            {
 
                 throw new NullReferenceException();
             }
@@ -44,16 +45,26 @@ namespace FinanceApp.Infrastructure.Services
 
         }
 
-        public async Task<Bill> CreateAsync(Service service, User user)
+        public async Task<Bill> CreateAsync(Service service, User user, double amountSpent)
         {
 
-            var bill = await billRepository.CreateAsync(service, user);
+            var bill = await billRepository.CreateAsync(service, user, amountSpent);
 
             return bill;
 
         }
 
-        public async Task<IEnumerable<Bill>> History( ClaimsPrincipal User)
+        public async Task UpdateAmountSpent(string userId, double amount)
+        {
+            var bill = await billRepository.GetLatestBillForUser(userId);
+            if (bill != null)
+            {
+                bill.AmountSpent += amount;
+                await billRepository.UpdateAsync(bill);
+            }
+        }
+
+        public async Task<IEnumerable<Bill>> History(ClaimsPrincipal User)
         {
             var user = await userManager.GetUserAsync(User);
 

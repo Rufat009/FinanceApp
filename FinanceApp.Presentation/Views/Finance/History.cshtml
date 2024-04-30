@@ -17,6 +17,7 @@ else
                 <span style="margin-top: 20px;">Date: @item.PayDate</span>
                 <span>Username: @item.User.UserName</span>
                 <span>Email: @item.User.Email</span>
+                <span>Amount Spent: @item.AmountSpent</span>
                 <button class="abonent" onclick="redirectToAction('/Identity/ProfileByAbonentNumber?AbonentNumber= @item.User.AbonentNumber')">Abonent Number: @item.User.AbonentNumber</button>
                 @if (isAdmin)
                 {

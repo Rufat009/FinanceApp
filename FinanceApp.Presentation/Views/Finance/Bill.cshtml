@@ -43,46 +43,63 @@
             <td>Price</td>
         </tr>
 
-        <tr class="item">
-            <td>Utility costs</td>
+       <tr class="item">
+    <td>Service cost</td>
+    <td>$@(Model.Service.ServiceCost)</td>
+</tr>
+<tr>
+    <td>
+        Balance: $<span id="userBalance">@Model.User.Balance</span><br>
+    </td>
+</tr>
 
-            <td>$@(Model.Service.MonthCost)</td>
-        </tr>
+<tr class="item">
+    <td>Enter your payment</td>
+    <td>
+        <input id="userPayment" type="number" min="0" step="0.01" placeholder="Enter your payment" />
+    </td>
+</tr>
 
-        <tr class="item">
-            <td>Cost (3 months)</td>
-
-            <td>$@(Model.Service.MonthCost * 3)</td>
-        </tr>
-
-
-
-        <tr class="total">
-            <td></td>
-
-            <td>Total: $@(Model.Service.MonthCost + Model.Service.UtilityCost)</td>            
-        </tr>
-        <tr class="total">
-            <td></td>
-
-            <td>Will remain on balance: $@(Model.User.Balance - (Model.Service.MonthCost + Model.Service.UtilityCost)) </td>
-        </tr>
-        <tr class="total">
-            <td></td>
-            @if(Model.User.Balance < Model.Service.MonthCost + Model.Service.UtilityCost)
-            {
-                <td>You dont have enought money on your balance!</td>
-            }else{
-                <td><button onclick="Accept(@(Model.Service.MonthCost + Model.Service.UtilityCost))">Accept</button></td>           
-            }
-        </tr>
-         <tr class="total">
-            <td></td>
-            <td><button onclick=redirectToAction("/Finance/Payment?id=@Model.Service.Id")>Decline</button></td>
-        </tr>
-
+<tr class="total">
+    <td></td>
+    <td><br>
+        <button onclick="Accept(document.getElementById('userPayment').value)">Accept</button>
+        <br>
+        <span id="errorMessage" style="color: red;"></span>
+    </td>
+</tr>
     </table>
 </div>
+
+<script>
+    function Accept() {
+        var userPaymentInput = document.getElementById('userPayment');
+        var userPayment = parseFloat(userPaymentInput.value);
+        var userBalance = parseFloat(document.getElementById('userBalance').innerText);
+        var errorMessage = document.getElementById('errorMessage');
+
+        if (userPaymentInput.value === '' || isNaN(userPayment)) {
+            errorMessage.innerText = 'Error: Please enter a valid payment amount.';
+        } else if (userPayment > userBalance) {
+            errorMessage.innerText = 'Error: Insufficient funds.';
+        } else {
+            errorMessage.innerText = '';
+            $.ajax({
+                url: '/Finance/Accept',
+                type: 'PUT',
+                data: JSON.stringify(userPayment),
+                contentType: 'application/json; charset=utf-8',
+                success: function() {
+                    window.location.href = '/Finance/History';
+                },
+                error: function() {
+                    errorMessage.innerText = 'Error: Unable to accept payment.';
+                }
+            });
+        }
+    }
+</script>
+
 
 <style>
     body {
@@ -178,6 +195,3 @@
 </style>
 
 
-@* <tr>
-<td><img src="~/Assets/Success.png" alt="Success"></td>
-</tr> *@

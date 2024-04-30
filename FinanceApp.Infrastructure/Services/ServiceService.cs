@@ -45,7 +45,6 @@ namespace FinanceApp.Infrastructure.Services
                 ImageUrl = $"Assets/{filename}",
                 Name = serviceDto.ServiceName,
                 ServiceCost = serviceDto.ServiceCost,
-                MonthCost = serviceDto.MonthCost,
 
             };
             await dbContext.Services.AddAsync(service);
@@ -77,6 +76,11 @@ namespace FinanceApp.Infrastructure.Services
 
         public async Task<IEnumerable<Service>> Search(string service)
         {
+            if (string.IsNullOrEmpty(service))
+            {
+                return await dbContext.Services.ToArrayAsync();
+            }
+
             var result = await dbContext.Services.Where(x => x.Name.Contains(service)).ToArrayAsync();
             return result;
         }

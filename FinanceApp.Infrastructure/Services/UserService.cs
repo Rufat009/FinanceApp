@@ -23,13 +23,13 @@ namespace FinanceApp.Infrastructure.Services
         public async Task ChangeBalance(string id, double toadd)
         {
             var user = await userManager.FindByIdAsync(id);
-            if (user.Balance + toadd > 5000)
+            if (user == null)
             {
-                throw new Exception("Error");
+                throw new Exception("Error: User not found.");
             }
-            if (user.Balance + toadd < 0)
+            if (toadd < 0 && user.Balance + toadd < 0)
             {
-                throw new Exception("Error");
+                throw new Exception("Error: Insufficient funds.");
             }
             user.Balance += toadd;
             await dbContext.SaveChangesAsync();
@@ -52,7 +52,7 @@ namespace FinanceApp.Infrastructure.Services
             await dbContext.SaveChangesAsync();
         }
 
-         public async Task<User> Search(string abonentNumber)
+        public async Task<User> Search(string abonentNumber)
         {
             var result = await dbContext.Users.FirstOrDefaultAsync(x => x.AbonentNumber.Equals(abonentNumber));
             return result;

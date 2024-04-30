@@ -7,9 +7,11 @@ using FinanceApp.Infrastructure.Repositories;
 using FinanceApp.Infrastructure.Respositories;
 using FinanceApp.Infrastructure.Services;
 using FinanceApp.Middlewares;
+using FinanceApp.Presentation.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,24 +39,13 @@ builder.Services.ConfigureApplicationCookie( p => {
     p.AccessDeniedPath = "/Identity/AccessDenied";
 });
 
-builder.Services.AddScoped<IServiceRepository,ServiceRepository>();
 
-builder.Services.AddScoped<IServiceService,ServiceService>();
-
-builder.Services.AddScoped<IBillService,BillService>();
-
-
-builder.Services.AddScoped<IBillRepository,BillRepository>();
-
-builder.Services.AddScoped<IUserService,UserService>();
-
-builder.Services.AddScoped<FinanceAppDbContext>();
-
-builder.Services.AddScoped<ILogRepository, FinanceLogRepository>();
-
-builder.Services.AddTransient<LogMiddleware>();
+builder.Services.Inject();
 
 var app = builder.Build();
+
+await app.Startup();
+
 
 app.UseAuthentication();
 

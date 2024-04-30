@@ -56,12 +56,26 @@ public class IdentityController : Controller
             return View();
         }
 
+        var existingUserWithEmail = await userManager.FindByEmailAsync(userDto.Email);
+        if (existingUserWithEmail != null)
+        {
+            ModelState.AddModelError("Email", "Email already in use.");
+            return View();
+        }
+
+        var existingUserWithAbonentNumber = await userManager.Users.FirstOrDefaultAsync(u => u.AbonentNumber == userDto.AbonentNumber);
+        if (existingUserWithAbonentNumber != null)
+        {
+            ModelState.AddModelError("AbonentNumber", "Abonent number already in use.");
+            return View();
+        }
+
         var user = new User
         {
-            UserName = userDto.Name,
-            Surname = userDto.Surname,
+            UserName = userDto.Name.Trim(),
+            Surname = userDto.Surname.Trim(),
             Age = userDto.Age,
-            Email = userDto.Email,
+            Email = userDto.Email.Trim(),
             AbonentNumber = userDto.AbonentNumber,
         };
 
@@ -69,7 +83,6 @@ public class IdentityController : Controller
 
         if (!result.Succeeded)
         {
-
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(error.Code, error.Description);
@@ -79,38 +92,9 @@ public class IdentityController : Controller
             {
                 return View();
             }
-
         }
 
-        var userRole = new IdentityRole
-        {
-            Name = "User"
-        };
-
-        await roleManager.CreateAsync(userRole);
         await userManager.AddToRoleAsync(user, "User");
-
-        return RedirectToAction("Login");
-    }
-
-    [AllowAnonymous]
-    public async Task<IActionResult> CreateAdmin()
-    {
-        var user = new User
-        {
-            UserName = "Admin",
-            Email = "admin@gmail.com"
-        };
-
-        var result = await userManager.CreateAsync(user, "Admin123!");
-
-        var userRole = new IdentityRole
-        {
-            Name = "Admin"
-        };
-
-        await roleManager.CreateAsync(userRole);
-        await userManager.AddToRoleAsync(user, "Admin");
 
         return RedirectToAction("Login");
     }

@@ -10,20 +10,21 @@ namespace FinanceApp.Infrastructure.Respositories;
 
 public class BillRepository : IBillRepository
 {
-	private readonly FinanceAppDbContext context;
+    private readonly FinanceAppDbContext context;
 
-	public BillRepository(FinanceAppDbContext context)
-	{
-		this.context = context;
-	}
+    public BillRepository(FinanceAppDbContext context)
+    {
+        this.context = context;
+    }
 
-    public async Task<Bill> CreateAsync(Service service, User user)
+    public async Task<Bill> CreateAsync(Service service, User user, double amountSpent)
     {
         var bill = new Bill
         {
             PayDate = DateTime.Now,
             User = user,
-            Service = service
+            Service = service,
+            AmountSpent = amountSpent
         };
 
         await context.Bills.AddAsync(bill);
@@ -32,18 +33,25 @@ public class BillRepository : IBillRepository
 
         bill.Id = (await context.Bills.OrderBy(e => e.PayDate).LastOrDefaultAsync()).Id;
 
-		return bill;
+        return bill;
 
     }
 
     public async Task DeleteAsync(int id)
     {
-         context.Bills.Remove(await GetByIdAsync(id));
+        context.Bills.Remove(await GetByIdAsync(id));
 
         await context.SaveChangesAsync();
 
     }
 
+    public async Task<Bill> GetLatestBillForUser(string userId)
+    {
+        return await context.Bills
+            .Where(b => b.User.Id == userId)
+            .OrderByDescending(b => b.PayDate)
+            .FirstOrDefaultAsync();
+    }
     public async Task<IEnumerable<Bill>> GetAllAsync()
     {
         return await context.Bills.Include("User").Include("Service").ToListAsync();
@@ -58,9 +66,9 @@ public class BillRepository : IBillRepository
     {
         var result = await context.Bills.FirstOrDefaultAsync(x => x.Id == bill.Id);
 
-		result.PayDate = bill.PayDate;
+        result.PayDate = bill.PayDate;
 
-		await context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
     }
 }

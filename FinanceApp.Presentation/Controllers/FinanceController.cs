@@ -26,7 +26,7 @@ public class FinanceController : Controller
     private readonly IValidator<ServiceDto> serviceValidator;
     private readonly IServiceService serviceService;
     private readonly IUserService userService;
-    public FinanceController(IBillService billService, IServiceRepository serviceRepository, UserManager<User> userManager, IServiceService serviceService, IUserService userService, IValidator<ServiceDto> serviceValidator,IServiceService addserviceService)
+    public FinanceController(IBillService billService, IServiceRepository serviceRepository, UserManager<User> userManager, IServiceService serviceService, IUserService userService, IValidator<ServiceDto> serviceValidator, IServiceService addserviceService)
     {
         this.userManager = userManager;
         this.serviceService = serviceService;
@@ -98,21 +98,24 @@ public class FinanceController : Controller
 
         var user = await userManager.GetUserAsync(User);
 
-        var bill = await billService.CreateAsync(service, user);
+        var bill = await billService.CreateAsync(service, user, 0);
 
         return View(bill);
 
     }
 
     [HttpPut]
-    public async Task<IActionResult> Accept(double amount)
+    public async Task<IActionResult> Accept([FromBody] double amount)
     {
-        await userService.ChangeBalance(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, -amount);
-        return RedirectToAction("Profile", "Identity");
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        await userService.ChangeBalance(userId, -amount);
+        await billService.UpdateAmountSpent(userId, amount);
+        return Ok();
     }
 
     [HttpGet]
-    public IActionResult AddService(){
+    public IActionResult AddService()
+    {
 
         return View();
     }
@@ -161,5 +164,5 @@ public class FinanceController : Controller
         return base.Ok();
     }
 
-    
+
 }

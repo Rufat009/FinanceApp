@@ -9,11 +9,12 @@ namespace FinanceApp.Core.Services
 {
     public interface IBillService
     {
-        public Task<Bill> CreateAsync(Service service, User user);
+        public Task<Bill> CreateAsync(Service service, User user, double amountSpent);
         public Task<Bill> GetByIdAsync(int id);
         public Task UpdateAsync(Bill bill);
         public Task DeleteAsync(int id);
          public  Task<IEnumerable<Bill>> History( ClaimsPrincipal User);
+        public Task UpdateAmountSpent(string userId, double amount);
 
 
 

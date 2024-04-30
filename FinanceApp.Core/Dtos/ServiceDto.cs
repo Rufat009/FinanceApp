@@ -11,7 +11,6 @@ namespace FinanceApp.Core.Dtos
         public IFormFile ServiceImageUrl { get; set; }
         public string ServiceName { get; set; }
         public double ServiceCost { get; set; }
-        public double MonthCost {get; set;}
 
     }
 }
