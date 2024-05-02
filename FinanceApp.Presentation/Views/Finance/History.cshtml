@@ -4,12 +4,17 @@
 
 }
 
+
 @if (!Model.Any())
 {
     <h1 class="text-center" style="padding-top: 300px; color: #fff">There is no finances!</h1>
 }
 else
 {
+<form id="searchForm">
+    <input type="text" id="searchInput" placeholder="Search by abonent number..." />
+    <button type="submit">Search</button>
+</form>
     <ul class="get-all-ul text-center" style="padding-top: 75px;">
         @foreach (var item in Model)
         {
@@ -18,18 +23,30 @@ else
                 <span>Username: @item.User.UserName</span>
                 <span>Email: @item.User.Email</span>
                 <span>Amount Spent: @item.AmountSpent</span>
-                <button class="abonent" onclick="redirectToAction('/Identity/ProfileByAbonentNumber?AbonentNumber= @item.User.AbonentNumber')">Abonent Number: @item.User.AbonentNumber</button>
+                <button class="abonent"
+                    onclick="redirectToAction('/Identity/ProfileByAbonentNumber?AbonentNumber= @item.User.AbonentNumber')">Abonent
+                    Number: @item.User.AbonentNumber</button>
                 @if (isAdmin)
                 {
                     <button class="edit" onclick="redirectToAction('/Finance/Update?id=@item.Id')">Edit</button>
-                    <button class="delete" style="margin-bottom: 10px;" onclick="redirectToAction('/Finance/Delete?id=@item.Id')">Delete</button>
+                    <button class="delete" style="margin-bottom: 10px;"
+                        onclick="redirectToAction('/Finance/Delete?id=@item.Id')">Delete</button>
                 }
-                <br/>
+                <br />
             </div>
         }
     </ul>
 }
 
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var abonentNumber = document.getElementById('searchInput').value;
+
+        window.location.href = '/Finance/SearchByAbonentNumber?abonentNumber=' + abonentNumber;
+    });
+</script>
 
 <style>
     .abonent {

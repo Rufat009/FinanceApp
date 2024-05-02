@@ -89,9 +89,27 @@ namespace FinanceApp.Infrastructure.Services
         {
             var service = await this.dbContext.Services.FirstOrDefaultAsync(service => service.Id == id);
 
+            File.Delete($"wwwroot/{service.ImageUrl}");
+
             this.dbContext.Remove<Service>(service!);
 
             await this.dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Bill>> SearchByAbonentNumber(int abonentNumber)
+        {
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.AbonentNumber == abonentNumber);
+
+            if (user == null)
+            {
+                return new List<Bill>();
+            }
+
+            var bills = await dbContext.Bills
+                .Where(b => b.User.Id == user.Id)
+                .ToArrayAsync();
+
+            return bills;
         }
     }
 }

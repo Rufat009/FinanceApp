@@ -164,5 +164,13 @@ public class FinanceController : Controller
         return base.Ok();
     }
 
+    [HttpGet]
+    public async Task<IActionResult> SearchByAbonentNumber(int abonentNumber)
+    {
+        var result = await serviceService.SearchByAbonentNumber(abonentNumber);
+
+        return View("History", result);
+    }
+
 
 }

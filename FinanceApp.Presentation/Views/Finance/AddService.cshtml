@@ -28,12 +28,12 @@ else
 
     <div class="form-group">
         <label asp-for="@Model.ServiceName">Service Name:</label>
-        <textarea asp-for="@Model.ServiceName" class="form-control"></textarea>
+        <input asp-for="@Model.ServiceName" class="form-control"></input>
     </div>
 
     <div class="form-group">
         <label asp-for="@Model.ServiceCost">Service Cost:</label>
-        <textarea asp-for="@Model.ServiceCost" class="form-control"></textarea>
+        <input type="number" asp-for="@Model.ServiceCost" class="form-control"></input>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
